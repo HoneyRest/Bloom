@@ -3468,6 +3468,181 @@ body.theme-dark [style*="background: #fff"] {
 }
 </style>
 
+<style id="mobile-final-lockdown-bloom">
+@media (max-width: 767px) {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  *, *::before, *::after {
+    box-sizing: border-box;
+    min-width: 0;
+  }
+  img, svg, canvas {
+    max-width: 100%;
+  }
+
+  .app-shell, .layout, .screen, .card, .panel, .app-header, .dashboard-home-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .app-shell {
+    padding-inline: clamp(14px, 4vw, 20px) !important;
+    padding-bottom: calc(300px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .layout,
+  main.layout {
+    width: 100% !important;
+    max-width: 100% !important;
+    gap: 12px !important;
+    margin-top: 10px !important;
+  }
+  .screen {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+  }
+  #bloomDemoChip.bloom-demo-chip {
+    display: none !important;
+  }
+
+  .left-dock {
+    display: none !important;
+  }
+  .app-header {
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 8px 12px !important;
+    margin-bottom: 10px !important;
+    overflow: visible !important;
+  }
+  .brand > p {
+    display: none !important;
+  }
+  .header-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    margin-bottom: 0 !important;
+    gap: 8px !important;
+  }
+  .brand h1 {
+    font-size: clamp(14px, 3.9vw, 18px) !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: min(220px, 62vw) !important;
+    line-height: 1.12 !important;
+  }
+  .brand .brand-mark,
+  .brand img,
+  .chip-row,
+  .header-row .chip {
+    display: none !important;
+  }
+  .brand img,
+  .brand .logo,
+  .brand .brand-mark {
+    max-height: 24px !important;
+  }
+
+  h1, .screen h1, .phase-hero-name {
+    font-size: clamp(28px, 8vw, 40px) !important;
+    line-height: 1.05 !important;
+  }
+  .screen p, .card p {
+    font-size: 15px !important;
+    line-height: 1.52 !important;
+  }
+
+  :is(.grid, .grid.cols-2, .grid.cols-3, .grid.cols-4, .option-grid, .goal-grid, .steps-grid, .badge-grid) {
+    grid-template-columns: 1fr !important;
+  }
+  :is(.card, .panel, .phase-hero-card, .dashboard-home-hero, .rich-dashboard-section, .support-card, .weekly-alignment-card) {
+    min-height: unset !important;
+    height: auto !important;
+    padding-block: clamp(18px, 5vw, 26px) !important;
+  }
+  .phase-arc-wrap {
+    width: clamp(114px, 36vw, 160px) !important;
+    height: clamp(114px, 36vw, 160px) !important;
+  }
+
+  .mobile-bottom-nav {
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    max-width: calc(100% - 24px) !important;
+    bottom: max(10px, env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 1200 !important;
+  }
+  .quick-log-bar {
+    bottom: calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+    max-width: calc(100% - 24px) !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    margin: 0 !important;
+    display: none !important;
+  }
+  .bloom-install-hint,
+  .bloom-install-overlay {
+    display: none !important;
+  }
+  #screen-daily-workout .polaroid-workout-card {
+    padding-bottom: clamp(36px, 10vw, 56px) !important;
+  }
+  #screen-daily-workout > .card:first-child {
+    display: none !important;
+  }
+  #screen-daily-workout .grid.cols-2 {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+  body.bloom-install-hint-active .app-shell {
+    padding-bottom: calc(128px + min(42vh, 280px) + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  input, select, textarea, .btn {
+    width: 100% !important;
+    min-height: 48px !important;
+  }
+}
+</style>
+<style id="bloom-final-product-pass">
+#screen-dashboard.active,
+.layout {
+  gap: 24px;
+}
+.card, .panel {
+  border-radius: 22px;
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--phase-primary, #6b8f71) 8%, transparent);
+}
+body.dark .card,
+body.theme-dark .card,
+html.dark body .card {
+  background: color-mix(in srgb, var(--card, #1e1b22) 96%, var(--phase-primary, #6b8f71) 4%) !important;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.35) !important;
+}
+@media (min-width: 1024px) {
+  .app-shell {
+    max-width: 1120px;
+  }
+}
+.mobile-bottom-nav .mob-nav-btn.active {
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--phase-primary, #6b8f71) 28%, transparent);
+}
+.phase-arc-wrap svg {
+  transition: transform 0.45s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .phase-arc-wrap svg {
+    transition: none !important;
+  }
+}
+</style>
 </head>
 <body>
   <div id="appSplash" aria-hidden="true">
