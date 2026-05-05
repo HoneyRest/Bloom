@@ -705,6 +705,10 @@ html[data-theme="dark"] .bloom-demo-chip {
       padding: 6px max(10px, env(safe-area-inset-right, 0px)) calc(4px + env(safe-area-inset-bottom, 0px)) max(10px, env(safe-area-inset-left, 0px));
       box-shadow: 0 -10px 32px rgba(17,16,22,.10), inset 0 1px 0 rgba(255,255,255,0.95);
     }
+    /* Desktop/tablet/narrow: use header + left dock; avoid mobile nav overlap */
+    @media (min-width: 768px) {
+      .mobile-bottom-nav { display:none !important; }
+    }
 
     .mobile-bottom-nav-inner {
       display: flex;
@@ -1184,6 +1188,18 @@ html[data-theme="dark"] .bloom-demo-chip {
       .hero-ring-col{margin:0;width:min(192px,48vw);align-self:center}
       .hero-ring-col svg,.hero-ring-col .cycle-ritual-ring,.hero-ring-col canvas{width:min(192px,48vw);height:min(192px,48vw);max-width:min(192px,48vw)}
       .dashboard-home-hero__donut-col{margin:8px auto 0;max-width:min(192px,48vw);}
+    }
+    /* Mobile regression guard: keep CTA visible above fixed bottom nav at 320px widths */
+    @media(max-width:360px){
+      .dashboard-home-hero{padding:14px 14px 16px}
+      .cycle-ritual-ring-wrap{margin:6px 0 10px}
+      .cycle-ritual-ring{width:min(182px,60vw)}
+      .dashboard-home-hero__grid{gap:12px}
+      .hero-ring-col{width:min(140px,44vw);gap:6px}
+      .hero-ring-col svg,.hero-ring-col .cycle-ritual-ring,.hero-ring-col canvas{width:min(140px,44vw);height:min(140px,44vw);max-width:min(140px,44vw)}
+      .dashboard-home-hero__meta{font-size:13px;margin-bottom:8px}
+      .dashboard-home-hero__phase-focus-line{margin-top:6px}
+      .dashboard-home-hero__primary{min-height:46px}
     }
     .dashboard-home-hero__title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
     .dashboard-home-hero__phase{
@@ -2165,6 +2181,20 @@ html.onboarding-open,body.onboarding-open{overflow:auto!important}
   .onboarding-brand{margin-bottom:10px!important;padding-bottom:10px!important}
   .onboarding-lead,.onboarding-footnote{font-size:12px!important}
   .onboarding-fields{gap:8px!important}
+
+  /* Micro-precision: keep CTA visible at 320/360 widths */
+  @media (max-width:360px){
+    .dashboard-home-hero{padding:16px 14px!important;border-radius:26px!important}
+    .dashboard-home-hero__grid{gap:12px!important}
+    .hero-ring-col{width:min(140px,44vw)!important}
+    .hero-ring-col .cycle-ritual-ring-wrap{margin:6px 0 10px!important}
+    .hero-ring-col .cycle-ritual-ring{width:min(160px,56vw)!important}
+    .dashboard-home-hero__greet{font-size:clamp(20px,7.2vw,28px)!important;margin-bottom:6px!important}
+    .dashboard-home-hero__meta{font-size:13.5px!important;margin-bottom:8px!important}
+    .dashboard-home-hero__phase-focus-line{display:none!important}
+    .dashboard-home-hero__micro{font-size:13.25px!important;margin-bottom:10px!important}
+    .dashboard-home-hero__primary{min-height:46px!important}
+  }
 }
 @media (prefers-reduced-motion:reduce){
   .hero-ring-col,.energy-day-progress span,.onboarding-card--branded{animation:none!important}
@@ -5886,6 +5916,7 @@ body.theme-dark .mobile-bottom-nav {
               <div class="progress-track alignment-bar-track weekly-bar-bg" style="margin-top:14px;"><div class="progress-fill alignment-bar-fill weekly-bar-fill" style="width:${alignPack.overall}%;background:linear-gradient(90deg,var(--phase-primary),var(--phase-secondary));"></div></div>
             </section>`;
 
+      const todayMeta = getTodayCycleMeta();
       el("screen-dashboard").innerHTML=`
         <div id="today-hero" class="card dashboard-home-hero home-hero-upgraded premium-home today-hero">
           <div class="dashboard-home-hero__grid">
@@ -5893,7 +5924,7 @@ body.theme-dark .mobile-bottom-nav {
               <div class="hero-copy">
                 <p class="hero-date-slot" id="dashHeroDate"></p>
                 ${bloomSoulHtml}
-                <p class="dashboard-home-hero__meta">Day ${state.profile.cycleDay || 1} \u00b7 ${esc(currentPhaseName)} \u00b7 Only on this device</p>
+                <p class="dashboard-home-hero__meta">Day ${todayMeta.cycleDay || 1} \u00b7 ${esc(currentPhaseName)} \u00b7 Only on this device</p>
                 <p class="dashboard-home-hero__phase-focus-line">${esc(phaseDirectionLine)}</p>
                 <p class="dashboard-home-hero__micro">${esc(heroSupportMicro)}</p>
                 <div class="dashboard-home-hero__primary-wrap">
