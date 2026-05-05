@@ -3643,6 +3643,294 @@ html.dark body .card {
   }
 }
 </style>
+
+<style id="bloom-premium-v2">
+/* ═══════════════════════════════════════════════
+   BLOOM — PREMIUM UPGRADE V2
+   ─────────────────────────────────────────────── */
+
+/* ── 1. UNIFIED SHADOW SYSTEM ── */
+:root {
+  --elev-1: 0 2px 8px rgba(17,16,22,.06), 0 1px 2px rgba(17,16,22,.04);
+  --elev-2: 0 8px 24px rgba(17,16,22,.09), 0 2px 6px rgba(17,16,22,.05);
+  --elev-3: 0 18px 48px rgba(17,16,22,.12), 0 4px 12px rgba(17,16,22,.06);
+  --elev-float: 0 24px 64px rgba(17,16,22,.14), 0 6px 18px rgba(17,16,22,.07);
+}
+body.theme-dark {
+  --elev-1: 0 2px 8px rgba(0,0,0,.22);
+  --elev-2: 0 8px 24px rgba(0,0,0,.34), 0 2px 6px rgba(0,0,0,.2);
+  --elev-3: 0 18px 48px rgba(0,0,0,.48), 0 4px 12px rgba(0,0,0,.3);
+  --elev-float: 0 24px 64px rgba(0,0,0,.58), 0 6px 18px rgba(0,0,0,.36);
+}
+
+/* ── 2. DARK MODE: Eliminate header light leak ── */
+body.theme-dark .app-header {
+  background: color-mix(in srgb, rgba(20,18,28,.98) 88%, var(--phase-primary)) !important;
+  border-color: rgba(255,255,255,.07) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+body.theme-dark .chip {
+  background: color-mix(in srgb, var(--card) 90%, var(--phase-primary) 10%) !important;
+  border-color: rgba(255,255,255,.09) !important;
+}
+
+/* ── 3. HEADER ACCENT: Static instead of infinite loop ── */
+.app-header::after {
+  animation: none !important;
+  background: linear-gradient(90deg,
+    var(--phase-primary),
+    var(--phase-secondary) 45%,
+    var(--phase-primary)) !important;
+  background-size: 100% 100% !important;
+  opacity: 0.72;
+  height: 2.5px !important;
+}
+body.theme-dark .app-header::after { opacity: 0.38; }
+
+/* ── 4. CARD SYSTEM ── */
+.card {
+  border-radius: 22px !important;
+  box-shadow: var(--elev-2) !important;
+  background: rgba(255,255,255,0.84) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+body.theme-dark .card {
+  background: color-mix(in srgb, var(--card) 97%, var(--phase-primary) 3%) !important;
+  box-shadow: var(--elev-3) !important;
+  border-color: rgba(255,255,255,.06) !important;
+}
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: var(--elev-3) !important;
+  }
+}
+
+/* ── 5. BOTTOM NAV — Fix 10px labels ── */
+.mob-nav-btn {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  padding: 8px 4px 6px !important;
+  border-radius: 12px !important;
+  gap: 3px !important;
+}
+/* Remove double active indicator */
+.mob-nav-btn.active::after { display: none !important; }
+.mob-nav-btn.active {
+  background: color-mix(in srgb, var(--phase-card-accent) 88%, transparent) !important;
+  box-shadow: 0 2px 10px color-mix(in srgb, var(--phase-primary) 16%, transparent) !important;
+}
+body.theme-dark .mob-nav-btn.active {
+  background: color-mix(in srgb, var(--phase-primary) 15%, rgba(255,255,255,.04)) !important;
+}
+/* 360px and below: icons only */
+@media (max-width: 360px) {
+  .mob-nav-btn { font-size: 0 !important; gap: 0 !important; padding: 10px 6px !important; }
+  .mob-nav-btn svg { width: 22px !important; height: 22px !important; }
+}
+
+/* ── 6. PROGRESS BARS: Refined ── */
+.progress-track { height: 6px !important; border-radius: 999px !important; }
+.progress-fill { border-radius: 999px !important; }
+
+/* ── 7. PRIMARY BUTTON: Phase-aware gradient ── */
+.btn:not(.secondary):not(.yellow):not(.danger):not(.pink) {
+  background: linear-gradient(135deg,
+    var(--phase-primary),
+    color-mix(in srgb, var(--phase-primary) 62%, var(--phase-secondary))) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 6px 20px color-mix(in srgb, var(--phase-primary) 26%, transparent) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+  transition: transform 140ms ease, box-shadow 170ms ease !important;
+}
+.btn:not(.secondary):not(.yellow):not(.danger):not(.pink):hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--phase-primary) 34%, transparent) !important;
+}
+.btn.secondary {
+  border-radius: 14px !important;
+  border-width: 1.5px !important;
+}
+
+/* ── 8. CHIPS: Fix 320px wrapping ── */
+.chip {
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  padding: 6px 12px !important;
+  font-weight: 500 !important;
+}
+@media (max-width: 380px) {
+  .chip-row { gap: 4px !important; flex-wrap: nowrap !important; overflow-x: auto !important; }
+  .chip { font-size: 10.5px !important; padding: 5px 9px !important; flex-shrink: 0 !important; }
+}
+
+/* ── 9. HEATMAP CELLS: Premium warm feel ── */
+.heatmap-cell {
+  border-radius: 5px !important;
+  transition: transform 140ms ease !important;
+}
+.heatmap-cell:hover { transform: scale(1.18) !important; }
+.heatmap-cell.heatmap-unlogged {
+  background: color-mix(in srgb, var(--border) 55%, transparent) !important;
+}
+body.theme-dark .heatmap-cell.heatmap-unlogged {
+  background: color-mix(in srgb, var(--card) 78%, var(--phase-primary) 22%) !important;
+}
+
+/* ── 10. DONUT ── */
+.donut .track { stroke-width: 8 !important; }
+.donut .fill { stroke-width: 8 !important; }
+.donut-premium {
+  filter: drop-shadow(0 12px 28px color-mix(in srgb, var(--phase-primary) 20%, transparent)) !important;
+}
+
+/* ── 11. SECTION TITLES ── */
+.section-title, h2.section-title {
+  font-size: clamp(1.05rem, 2.8vw, 1.3rem) !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.25 !important;
+  font-weight: 700 !important;
+}
+.section-subtitle {
+  font-size: 0.875rem !important;
+  line-height: 1.6 !important;
+}
+
+/* ── 12. QUICK LOG BAR ── */
+.quick-log-bar {
+  border-radius: 999px !important;
+  box-shadow: var(--elev-3) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(255,255,255,.55) !important;
+}
+body.theme-dark .quick-log-bar {
+  background: rgba(24,22,32,.97) !important;
+  border-color: rgba(255,255,255,.1) !important;
+}
+
+/* ── 13. INPUTS ── */
+input[type="number"], input[type="text"], select, textarea {
+  border-radius: 12px !important;
+  border-width: 1.5px !important;
+  transition: border-color 180ms ease, box-shadow 180ms ease !important;
+}
+input[type="number"]:focus, input[type="text"]:focus, select:focus, textarea:focus {
+  border-color: var(--phase-primary) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
+  outline: none !important;
+}
+
+/* ── 14. TAGS & PILLS ── */
+.tag {
+  border-radius: 999px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  padding: 5px 11px !important;
+}
+.pill {
+  border-radius: 999px !important;
+  font-size: 11.5px !important;
+  padding: 5px 11px !important;
+}
+.diff-pill {
+  border-radius: 999px !important;
+  font-size: 10.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.03em !important;
+  padding: 3px 10px !important;
+}
+
+/* ── 15. CARD ENTRY ANIMATION: Upgrade the existing fadeUp keyframe ── */
+/* Override the keyframe definition — keeps all existing timing/delays intact */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.99); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  @keyframes fadeUp { from { opacity: 1; } to { opacity: 1; } }
+}
+
+/* ── 16. MOBILE NAV BAR ── */
+.mobile-bottom-nav {
+  box-shadow: 0 -8px 32px rgba(17,16,22,.1), inset 0 1px 0 rgba(255,255,255,.5) !important;
+}
+body.theme-dark .mobile-bottom-nav {
+  box-shadow: 0 -8px 32px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+
+/* ── 17. GOAL BUTTONS ── */
+.goal-btn {
+  border-radius: 18px !important;
+  transition: transform 120ms ease, background 170ms ease, border-color 170ms ease !important;
+}
+.goal-btn.active {
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--phase-primary) 20%, transparent) !important;
+}
+
+/* ── 18. MICROCOPY ── */
+.microcopy {
+  border-radius: 16px !important;
+  font-size: 0.8125rem !important;
+  line-height: 1.55 !important;
+}
+
+/* ── 19. SEGMENTED CONTROL ── */
+.seg {
+  border-radius: 18px !important;
+  padding: 3px !important;
+  background: color-mix(in srgb, var(--border) 40%, transparent) !important;
+}
+.seg button {
+  border-radius: 15px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+/* ── 20. BRAND TITLE ── */
+.brand h1 {
+  font-size: clamp(1.6rem, 4vw, 2.2rem) !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.05 !important;
+}
+
+/* ── 21. KPI NUMBERS ── */
+.kpi-value {
+  font-size: clamp(2rem, 6vw, 2.6rem) !important;
+  letter-spacing: -0.04em !important;
+  line-height: 1.0 !important;
+}
+
+/* ── 22. TOAST ── */
+.toast {
+  border-radius: 18px !important;
+  box-shadow: var(--elev-float) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+}
+
+/* ── 23. CHECKLIST ITEMS ── */
+.checklist li {
+  border-radius: 14px !important;
+  transition: background 200ms ease, opacity 200ms ease !important;
+}
+
+/* ── 24. LEFT DOCK ── */
+.left-dock {
+  border-right: 1px solid var(--border) !important;
+}
+.dock-btn {
+  border-radius: 12px !important;
+  transition: background 150ms ease, transform 120ms ease !important;
+}
+@media (hover: hover) {
+  .dock-btn:hover { transform: scale(1.06) !important; }
+}
+</style>
+
 </head>
 <body>
   <div id="appSplash" aria-hidden="true">
@@ -8607,6 +8895,265 @@ html.dark body .card {
   else window.addEventListener("load", reveal, { once: true });
 })();
 </script>
+
+<style id="bloom-system-v3">
+/* ── Phase 4+5: Bloom premium depth & hierarchy ── */
+
+/* Hero card: tighter vertical rhythm on mobile so CTA is above fold */
+@media (max-width: 430px) {
+  .phase-hero-card { padding: 14px 16px !important; gap: 14px !important; }
+  .phase-hero-name { font-size: clamp(19px, 5vw, 24px) !important; margin-bottom: 2px !important; }
+  .phase-hero-day  { margin-bottom: 8px !important; }
+  .phase-hero-desc { font-size: 12.5px !important; margin-top: 6px !important; }
+}
+
+/* Phase-aware ambient canvas — desktop only, subtle */
+@media (min-width: 900px) {
+  body:not(.theme-dark) {
+    background: radial-gradient(
+      ellipse 70% 50% at 70% 0%,
+      color-mix(in srgb, var(--phase-primary) 8%, transparent),
+      transparent 60%
+    ), var(--bg) !important;
+  }
+  body.theme-dark {
+    background: radial-gradient(
+      ellipse 70% 50% at 70% 0%,
+      color-mix(in srgb, var(--phase-primary) 5%, transparent),
+      transparent 55%
+    ), var(--bg) !important;
+  }
+}
+
+/* Phase ring: glow ring behind the arc on hover */
+.phase-arc-wrap {
+  filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--phase-primary) 22%, transparent));
+  transition: filter 300ms ease;
+}
+
+/* Primary CTA: stronger depth + press state */
+.btn:not(.secondary):not(.yellow):not(.danger):not(.pink) {
+  box-shadow:
+    0 6px 20px color-mix(in srgb, var(--phase-primary) 28%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  transition: transform 140ms cubic-bezier(0.22,1,0.36,1), box-shadow 160ms ease !important;
+}
+.btn:not(.secondary):not(.yellow):not(.danger):not(.pink):active {
+  transform: scale(0.97) !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--phase-primary) 20%, transparent) !important;
+}
+@media (hover: hover) {
+  .btn:not(.secondary):not(.yellow):not(.danger):not(.pink):hover {
+    transform: translateY(-1px) !important;
+    box-shadow:
+      0 10px 28px color-mix(in srgb, var(--phase-primary) 34%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.28) !important;
+  }
+}
+
+/* Card: stronger inner highlight, warmer shadow */
+.card {
+  box-shadow:
+    0 4px 16px rgba(17,16,22,.07),
+    0 1px 4px rgba(17,16,22,.04),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+body.theme-dark .card {
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+
+/* Active nav: stronger pill highlight */
+.mob-nav-btn.active {
+  background: color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
+  border-radius: 14px !important;
+}
+.mob-nav-btn.active .mob-nav-label {
+  color: var(--phase-primary) !important;
+}
+
+/* Progress track: phase-tinted fill */
+.progress-bar {
+  background: linear-gradient(90deg,
+    var(--phase-primary),
+    color-mix(in srgb, var(--phase-primary) 70%, var(--phase-secondary))
+  ) !important;
+}
+
+/* Chip tags: phase-aware on hover */
+.chip {
+  transition: background 180ms ease, transform 120ms ease !important;
+}
+.chip:active { transform: scale(0.95) !important; }
+
+/* Streak/score numbers: stronger visual weight */
+.metric-value, .stat-value, .streak-count {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Settings: section headers spacing */
+@media (max-width: 430px) {
+  .settings-section + .settings-section { margin-top: 20px !important; }
+}
+
+/* Prefers-reduced-motion: strip all transitions */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .card, .chip, .phase-arc-wrap { transition: none !important; }
+}
+</style>
+
+<style id="bloom-fix-v4">
+/* ── BLOOM FIX v4: Audit-Driven Execution Pass ── */
+
+/* FIX CRITICAL: Left dock overlaps content at 768–1199px
+   Root cause: layout-stabilisation-final sets app-shell padding-left: 16px !important
+   overriding the 92px that should clear the 76px fixed dock */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .app-shell {
+    padding-left: 96px !important;
+  }
+}
+/* Extra clearance at narrow900 */
+@media (min-width: 520px) and (max-width: 767px) {
+  .app-shell {
+    padding-left: max(16px, env(safe-area-inset-left)) !important;
+  }
+}
+
+/* FIX HIGH: Dark mode — reinforce canvas/card backgrounds
+   Some blocks use rgba(255,255,255,...) without dark guards; patch them here */
+body.theme-dark,
+body.dark,
+html.dark body {
+  --bg: hsl(260, 12%, 8%) !important;
+  --card: hsl(260, 10%, 12%) !important;
+  --border: rgba(255,255,255,0.09) !important;
+}
+body.theme-dark {
+  background:
+    radial-gradient(ellipse 70% 35% at 15% 0%, color-mix(in srgb, var(--phase-primary) 6%, transparent), transparent 55%),
+    linear-gradient(180deg, #100d14 0%, #15111d 52%, #0e0b12 100%) !important;
+}
+/* Patch week preview cards that have hardcoded white backgrounds */
+body.theme-dark .week-preview,
+body.theme-dark .rich-dashboard-section.energy-preview-section,
+body.theme-dark [class*="7day"],
+body.theme-dark [class*="week-card"],
+body.dark .week-preview,
+html.dark body .week-preview {
+  background: linear-gradient(145deg, var(--card), hsl(260,8%,10%)) !important;
+  border-color: var(--border) !important;
+}
+body.theme-dark .app-header,
+body.dark .app-header,
+html.dark body .app-header {
+  background: hsl(260,12%,9%) !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
+}
+body.theme-dark .left-dock,
+body.dark .left-dock,
+html.dark body .left-dock {
+  background: hsl(260,12%,10%) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+body.theme-dark select,
+body.dark select,
+html.dark body select {
+  background: hsl(260,10%,12%) !important;
+  color: var(--text) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* FIX HIGH: Select dropdowns — custom styled */
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%237c6a9a'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+  background-size: 10px 6px !important;
+  border-radius: 12px !important;
+  padding-right: 36px !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  min-height: 44px !important;
+}
+body:not(.theme-dark):not(.dark) select {
+  background-color: rgba(255,255,255,0.92) !important;
+  border: 1.5px solid rgba(180,150,220,0.28) !important;
+  color: var(--text, #2a1f3f) !important;
+}
+body.theme-dark select,
+body.dark select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23b0a0d0'/%3E%3C/svg%3E") !important;
+  background-color: hsl(260,10%,14%) !important;
+  border: 1.5px solid rgba(200,180,255,0.18) !important;
+  color: var(--text, #f4effa) !important;
+}
+select:focus {
+  outline: none !important;
+  border-color: var(--phase-primary, #7c5fbe) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--phase-primary, #7c5fbe) 15%, transparent) !important;
+}
+
+/* FIX HIGH: Workout tag pills at 320px — 2-column grid instead of chaotic wrap */
+@media (max-width: 360px) {
+  .tag-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+  .tag {
+    text-align: center !important;
+    font-size: 11px !important;
+    padding: 5px 8px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+/* FIX HIGH: Progress empty state — aspirational streak subtitle */
+.streak-hero__empty,
+.empty-streak-msg,
+[class*="streak-empty"],
+[class*="no-streak"] {
+  font-style: italic !important;
+  color: var(--muted) !important;
+  opacity: 0.8 !important;
+}
+
+/* PREMIUM: Phase rhythm grid squares — phase-colour tint at 0 data */
+.log-day-square:not(.has-data),
+.day-grid-cell:not(.logged),
+[class*="rhythm-square"]:not([class*="active"]):not([class*="done"]) {
+  background: color-mix(in srgb, var(--phase-primary) 10%, transparent) !important;
+  opacity: 0.55 !important;
+}
+
+/* PREMIUM: Settings feature tiles — card treatment */
+.feature-tile, [class*="feature-tile"],
+.settings-feature, [class*="feature-card"]:not(.card) {
+  border-radius: 16px !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06), inset 0 1px 0 rgba(255,255,255,0.8) !important;
+  padding: 14px 16px !important;
+  transition: transform 150ms ease, box-shadow 150ms ease !important;
+}
+body.theme-dark .feature-tile,
+body.dark .feature-tile,
+body.dark [class*="feature-tile"] {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+/* Extended reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  select { transition: none !important; }
+}
+</style>
 
 </body>
 </html>
