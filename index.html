@@ -11059,18 +11059,68 @@ body.theme-dark #screen-profile select {
 </style>
 
 <!-- ═══════════════════════════════════════════════════════════
+     BLOOM — CRITICAL CSS FIX
+     bloom-foundation-v1 appended:
+       .onboarding-overlay { display: flex !important; }
+     This overrides every inline style.display="none" the app
+     sets, so the overlay can NEVER be hidden once it shows.
+     Fix: Mirror inline-style changes onto a CSS class with
+          higher specificity (two classes beats one class).
+     ═══════════════════════════════════════════════════════════ -->
+<style id="bloom-hidden-fix">
+/* Two-class selector (0,2,0) beats .onboarding-overlay (0,1,0) at same !important level */
+.onboarding-overlay.bloom-onb-closed { display: none !important; }
+/* Also hide the onboarding-open overflow lock when closed */
+html.bloom-onb-closed-html, body.bloom-onb-closed-body { overflow: auto !important; }
+</style>
+
+<!-- ═══════════════════════════════════════════════════════════
      BLOOM — ACCESS BLOCKER RESCUE v1
      Existing state:
        • Step 1 has "Skip setup · explore first" button — works ✓
        • Steps 2 & 3 have no skip option (have Back button though)
      Fixes:
+       • MutationObserver mirrors overlay inline-display → CSS class
+         so the overlay can actually hide despite display:flex!important
        • Add "Skip · explore first" button to steps 2 and 3 for parity
-       • Ensure overlay.onboarding-open class removed after skip
      ═══════════════════════════════════════════════════════════ -->
 <script id="bloom-rescue-v1">
 (function () {
   'use strict';
 
+  /* ── 1. Mirror overlay inline display onto CSS class ──────────
+     When the app sets overlay.style.display="none", the class
+     .bloom-onb-closed is added, which uses higher specificity
+     to override the display:flex!important from the foundation CSS.  ──────────────────────────────────────────────────────────── */
+  function watchOverlay() {
+    var ov = document.getElementById('onboardingOverlay');
+    if (!ov) return;
+
+    function syncClass() {
+      var hidden = ov.style.display === 'none';
+      ov.classList.toggle('bloom-onb-closed', hidden);
+      document.documentElement.classList.toggle('bloom-onb-closed-html', hidden);
+      document.body.classList.toggle('bloom-onb-closed-body', hidden);
+      /* Also force-remove onboarding-open when hidden */
+      if (hidden) {
+        document.documentElement.classList.remove('onboarding-open');
+        document.body.classList.remove('onboarding-open');
+      }
+    }
+
+    /* Observe style attribute changes */
+    var obs = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.attributeName === 'style') syncClass();
+      });
+    });
+    obs.observe(ov, { attributes: true, attributeFilter: ['style'] });
+
+    /* Initial sync */
+    syncClass();
+  }
+
+  /* ── 2. Add "Skip setup · explore first" to steps 2 and 3 ── */
   function addSkipToSteps() {
     /* Step 2 */
     var panel2Actions = document.querySelector('#obPanel2 .ob-actions');
@@ -11100,15 +11150,11 @@ body.theme-dark #screen-profile select {
   }
 
   function triggerExploreFirst() {
-    /* Mirror what the real exploreFirst handler does */
     var exploreBtn = document.getElementById('exploreFirst');
-    if (exploreBtn) {
-      exploreBtn.click();
-      return;
-    }
-    /* Fallback: directly patch state and hide */
+    if (exploreBtn) { exploreBtn.click(); return; }
+    /* Fallback if button not accessible */
     try {
-      var raw = localStorage.getItem('cycle_bloom_studio_v1') || localStorage.getItem('cycle_sync_pilates_planner_v1') || '{}';
+      var raw = localStorage.getItem('cycle_bloom_studio_v1') || '{}';
       var st = JSON.parse(raw);
       st.onboardingComplete = true;
       if (!st.profile) st.profile = {};
@@ -11117,15 +11163,44 @@ body.theme-dark #screen-profile select {
       localStorage.setItem('cycle_bloom_studio_v1', JSON.stringify(st));
     } catch (e) {}
     var overlay = document.getElementById('onboardingOverlay');
-    if (overlay) overlay.style.display = 'none';
+    if (overlay) { overlay.style.display = 'none'; } /* MutationObserver will add class */
     document.documentElement.classList.remove('onboarding-open');
     document.body.classList.remove('onboarding-open');
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addSkipToSteps);
-  } else {
+  /* ── 3. Dismiss micro-feel overlay when onboarding is pending ──
+     bloomMicroFeelOverlay has z-index:10002 vs onboarding z-index:10001.
+     On a fresh first load (no localStorage) it appears on top and
+     blocks the entire onboarding step — user can't see or reach Skip.
+     Fix: if onboarding hasn't been completed yet, close the micro-feel
+     overlay immediately so the onboarding step is fully accessible.    ──────────────────────────────────────────────────────────── */
+  function dismissMicroFeelIfOnboardingPending() {
+    try {
+      var raw = localStorage.getItem('cycle_bloom_studio_v1');
+      var st = raw ? JSON.parse(raw) : {};
+      if (st.onboardingComplete === true) return; /* already done — let it show normally */
+    } catch (e) { /* fresh load — treat as pending */ }
+
+    var mf = document.getElementById('bloomMicroFeelOverlay');
+    if (!mf) return;
+    mf.classList.remove('is-open');
+    mf.setAttribute('hidden', '');
+    mf.setAttribute('aria-hidden', 'true');
+    mf.style.display = 'none';
+    /* Mark the energy key so it doesn't reappear on next visit */
+    try { localStorage.setItem('bloomFirstEnergyV1', 'deferred'); } catch (e) {}
+  }
+
+  function init() {
+    watchOverlay();
     addSkipToSteps();
+    dismissMicroFeelIfOnboardingPending();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
   }
 })();
 </script>
