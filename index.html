@@ -11058,5 +11058,77 @@ body.theme-dark #screen-profile select {
 
 </style>
 
+<!-- ═══════════════════════════════════════════════════════════
+     BLOOM — ACCESS BLOCKER RESCUE v1
+     Existing state:
+       • Step 1 has "Skip setup · explore first" button — works ✓
+       • Steps 2 & 3 have no skip option (have Back button though)
+     Fixes:
+       • Add "Skip · explore first" button to steps 2 and 3 for parity
+       • Ensure overlay.onboarding-open class removed after skip
+     ═══════════════════════════════════════════════════════════ -->
+<script id="bloom-rescue-v1">
+(function () {
+  'use strict';
+
+  function addSkipToSteps() {
+    /* Step 2 */
+    var panel2Actions = document.querySelector('#obPanel2 .ob-actions');
+    if (panel2Actions && !panel2Actions.querySelector('[data-rescue-skip]')) {
+      var s2 = document.createElement('button');
+      s2.type = 'button';
+      s2.className = 'btn secondary ob-skip-btn';
+      s2.setAttribute('data-rescue-skip', '2');
+      s2.textContent = 'Skip setup · explore first';
+      s2.style.cssText = 'margin-top:4px;';
+      panel2Actions.appendChild(s2);
+      s2.addEventListener('click', triggerExploreFirst);
+    }
+
+    /* Step 3 */
+    var panel3Actions = document.querySelector('#obPanel3 .ob-actions');
+    if (panel3Actions && !panel3Actions.querySelector('[data-rescue-skip]')) {
+      var s3 = document.createElement('button');
+      s3.type = 'button';
+      s3.className = 'btn secondary ob-skip-btn';
+      s3.setAttribute('data-rescue-skip', '3');
+      s3.textContent = 'Skip setup · explore first';
+      s3.style.cssText = 'margin-top:4px;';
+      panel3Actions.appendChild(s3);
+      s3.addEventListener('click', triggerExploreFirst);
+    }
+  }
+
+  function triggerExploreFirst() {
+    /* Mirror what the real exploreFirst handler does */
+    var exploreBtn = document.getElementById('exploreFirst');
+    if (exploreBtn) {
+      exploreBtn.click();
+      return;
+    }
+    /* Fallback: directly patch state and hide */
+    try {
+      var raw = localStorage.getItem('cycle_bloom_studio_v1') || localStorage.getItem('cycle_sync_pilates_planner_v1') || '{}';
+      var st = JSON.parse(raw);
+      st.onboardingComplete = true;
+      if (!st.profile) st.profile = {};
+      st.profile.currentPhase = st.profile.currentPhase || 'follicular';
+      st.selectedPhase = st.profile.currentPhase;
+      localStorage.setItem('cycle_bloom_studio_v1', JSON.stringify(st));
+    } catch (e) {}
+    var overlay = document.getElementById('onboardingOverlay');
+    if (overlay) overlay.style.display = 'none';
+    document.documentElement.classList.remove('onboarding-open');
+    document.body.classList.remove('onboarding-open');
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', addSkipToSteps);
+  } else {
+    addSkipToSteps();
+  }
+})();
+</script>
+
 </body>
 </html>
