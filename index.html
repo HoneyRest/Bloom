@@ -3106,7 +3106,8 @@ html.onboarding-open,body.onboarding-open{overflow:auto!important}
             <span><strong>${title}</strong><span>${copy}</span></span>
           </article>${i < steps.length - 1 ? '<span class="bloom-path-chevron" aria-hidden="true">→</span>' : ''}
         `).join('');
-        hero.insertAdjacentElement('afterend', path);
+        const osStrip = document.querySelector('.bloom-os-insight-strip');
+        (osStrip || hero).insertAdjacentElement('afterend', path);
       }
     }
 
@@ -3257,8 +3258,8 @@ html.onboarding-open,body.onboarding-open{overflow:auto!important}
   -webkit-font-smoothing: antialiased;
 }
 
-html, body {
-  overscroll-behavior: none;
+body {
+  overscroll-behavior: none; /* html excluded — overscroll on html can interact badly with scroll */
   scroll-behavior: smooth;
 }
 
@@ -3340,7 +3341,7 @@ input:focus, textarea:focus {
 </style>
 
 <style id="responsive-layout-fix-v1">
-html { overflow-x: hidden; }
+/* html overflow-x removed — html must stay visible so body propagates scroll to document */
 body { overflow-x: hidden; min-width: 0; }
 
 :is(.app-shell, .layout, main, .main-scroll, .main, .content, .view, .stack,
@@ -3396,7 +3397,7 @@ html[data-theme="dark"] .bloom-install-sheet {
 * { min-width: 0; }
 svg, img, video, canvas, iframe { min-width: auto; }
 
-html { overflow-x: hidden; }
+/* html overflow-x removed — body handles horizontal clip */
 body {
   overflow-x: hidden;
   padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
@@ -3959,6 +3960,2919 @@ body.theme-dark .mobile-bottom-nav {
 @media (hover: hover) {
   .dock-btn:hover { transform: scale(1.06) !important; }
 }
+</style>
+
+
+
+<style id="bloom-system-v3">
+/* ── Phase 4+5: Bloom premium depth & hierarchy ── */
+
+/* Hero card: tighter vertical rhythm on mobile so CTA is above fold */
+@media (max-width: 430px) {
+  .phase-hero-card { padding: 14px 16px !important; gap: 14px !important; }
+  .phase-hero-name { font-size: clamp(19px, 5vw, 24px) !important; margin-bottom: 2px !important; }
+  .phase-hero-day  { margin-bottom: 8px !important; }
+  .phase-hero-desc { font-size: 12.5px !important; margin-top: 6px !important; }
+}
+
+/* Phase-aware ambient canvas — desktop only, subtle */
+@media (min-width: 900px) {
+  body:not(.theme-dark) {
+    background: radial-gradient(
+      ellipse 70% 50% at 70% 0%,
+      color-mix(in srgb, var(--phase-primary) 8%, transparent),
+      transparent 60%
+    ), var(--bg) !important;
+  }
+  body.theme-dark {
+    background: radial-gradient(
+      ellipse 70% 50% at 70% 0%,
+      color-mix(in srgb, var(--phase-primary) 5%, transparent),
+      transparent 55%
+    ), var(--bg) !important;
+  }
+}
+
+/* Phase ring: glow ring behind the arc on hover */
+.phase-arc-wrap {
+  filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--phase-primary) 22%, transparent));
+  transition: filter 300ms ease;
+}
+
+/* Primary CTA: stronger depth + press state */
+.btn:not(.secondary):not(.yellow):not(.danger):not(.pink) {
+  box-shadow:
+    0 6px 20px color-mix(in srgb, var(--phase-primary) 28%, transparent),
+    inset 0 1px 0 rgba(255,255,255,0.22) !important;
+  transition: transform 140ms cubic-bezier(0.22,1,0.36,1), box-shadow 160ms ease !important;
+}
+.btn:not(.secondary):not(.yellow):not(.danger):not(.pink):active {
+  transform: scale(0.97) !important;
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--phase-primary) 20%, transparent) !important;
+}
+@media (hover: hover) {
+  .btn:not(.secondary):not(.yellow):not(.danger):not(.pink):hover {
+    transform: translateY(-1px) !important;
+    box-shadow:
+      0 10px 28px color-mix(in srgb, var(--phase-primary) 34%, transparent),
+      inset 0 1px 0 rgba(255,255,255,0.28) !important;
+  }
+}
+
+/* Card: stronger inner highlight, warmer shadow */
+.card {
+  box-shadow:
+    0 4px 16px rgba(17,16,22,.07),
+    0 1px 4px rgba(17,16,22,.04),
+    inset 0 1px 0 rgba(255,255,255,.85) !important;
+}
+body.theme-dark .card {
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.06) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+
+/* Active nav: stronger pill highlight */
+.mob-nav-btn.active {
+  background: color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
+  border-radius: 14px !important;
+}
+.mob-nav-btn.active .mob-nav-label {
+  color: var(--phase-primary) !important;
+}
+
+/* Progress track: phase-tinted fill */
+.progress-bar {
+  background: linear-gradient(90deg,
+    var(--phase-primary),
+    color-mix(in srgb, var(--phase-primary) 70%, var(--phase-secondary))
+  ) !important;
+}
+
+/* Chip tags: phase-aware on hover */
+.chip {
+  transition: background 180ms ease, transform 120ms ease !important;
+}
+.chip:active { transform: scale(0.95) !important; }
+
+/* Streak/score numbers: stronger visual weight */
+.metric-value, .stat-value, .streak-count {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Settings: section headers spacing */
+@media (max-width: 430px) {
+  .settings-section + .settings-section { margin-top: 20px !important; }
+}
+
+/* Prefers-reduced-motion: strip all transitions */
+@media (prefers-reduced-motion: reduce) {
+  .btn, .card, .chip, .phase-arc-wrap { transition: none !important; }
+}
+</style>
+
+<style id="bloom-foundation-v1">
+/*
+  ══════════════════════════════════════════════════════════════
+  BLOOM — FOUNDATION v1  (2026-05-06)
+  Premium Wellness App — Complete Design System
+  ──────────────────────────────────────────────────────────────
+  Architecture: Tokens → Canvas → Shell → Onboarding →
+                Header → Hero → Cards → Nav → Responsive
+  Supersedes: reconstruction-v1 + all prior patch blocks.
+  ══════════════════════════════════════════════════════════════
+*/
+
+/* ══ 1. DESIGN TOKENS ═══════════════════════════════════════ */
+:root {
+  /* Spacing (4px base, 8px rhythm) */
+  --sp-1:  4px;   --sp-2:  8px;   --sp-3:  12px;
+  --sp-4:  16px;  --sp-5:  20px;  --sp-6:  24px;
+  --sp-8:  32px;  --sp-10: 40px;  --sp-14: 56px;
+
+  /* Radius */
+  --r-xs:   8px;  --r-sm:  10px;  --r-base: 14px;
+  --r-md:  18px;  --r-lg:  24px;  --r-xl:  32px;
+  --r-full: 999px;
+
+  /* Elevation */
+  --sh-xs:   0 1px 2px rgba(17,16,22,.04);
+  --sh-sm:   0 1px 3px rgba(17,16,22,.05), 0 1px 2px rgba(17,16,22,.03);
+  --sh-md:   0 4px 16px rgba(17,16,22,.07), 0 1px 4px rgba(17,16,22,.04),
+             inset 0 1px 0 rgba(255,255,255,.85);
+  --sh-lg:   0 12px 32px rgba(17,16,22,.10), 0 3px 10px rgba(17,16,22,.05),
+             inset 0 1px 0 rgba(255,255,255,.90);
+  --sh-hero: 0 20px 56px rgba(17,16,22,.10), 0 6px 18px rgba(17,16,22,.06),
+             inset 0 1.5px 0 rgba(255,255,255,.90);
+  --sh-float:0 24px 64px rgba(17,16,22,.13), 0 6px 20px rgba(17,16,22,.07);
+
+  /* Typography */
+  --font-serif: ui-serif, Georgia, 'Times New Roman', serif;
+  --font-ui:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* Font scale */
+  --fs-2xs: 10px;  --fs-xs:  11px;  --fs-sm:  12px;
+  --fs-base: 13px; --fs-md:  14px;  --fs-lg:  15px;
+  --fs-xl:   17px; --fs-2xl: 20px;  --fs-3xl: 24px; --fs-4xl: 30px;
+}
+
+/* ══ 2. BASE RESET ══════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box !important; }
+* { min-width: 0 !important; }
+svg, img, video, canvas, iframe { min-width: auto !important; }
+/* html overflow-x:hidden REMOVED — kills page scroll by making html the scroll root */
+body {
+  overflow-x:          hidden !important;
+  font-family:         var(--font-ui) !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  -webkit-text-size-adjust: 100% !important;
+}
+
+/* ══ 3. LIGHT MODE CANVAS ═══════════════════════════════════ */
+body:not(.theme-dark) {
+  background:
+    radial-gradient(ellipse 70% 48% at 88% 0%,
+      color-mix(in srgb, var(--phase-primary) 11%, transparent), transparent 58%),
+    radial-gradient(ellipse 50% 38% at 8% 100%,
+      color-mix(in srgb, var(--phase-secondary) 7%, transparent), transparent 52%),
+    linear-gradient(175deg, #f9f8fc 0%, #f5f3fa 45%, #f8f6fb 100%) !important;
+}
+
+/* ══ 4. DARK MODE ═══════════════════════════════════════════ */
+body.theme-dark {
+  --bg:     #0d0b13 !important;
+  --card:   #1a1724 !important;
+  --border: rgba(255,255,255,0.075) !important;
+  --text:   #edeaf6 !important;
+  --muted:  #8a8298 !important;
+  background:
+    radial-gradient(ellipse 65% 40% at 80% 0%,
+      color-mix(in srgb, var(--phase-primary) 9%, transparent), transparent 52%),
+    radial-gradient(ellipse 45% 30% at 15% 95%,
+      color-mix(in srgb, var(--phase-primary) 5%, transparent), transparent 48%),
+    linear-gradient(175deg, #0d0b13 0%, #110f18 50%, #0b0910 100%) !important;
+}
+body.theme-dark .card {
+  background:   #1e1b2a !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  box-shadow:   0 4px 20px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+body.theme-dark .dashboard-home-hero, body.theme-dark .phase-hero-card {
+  background:
+    radial-gradient(ellipse 78% 52% at 10% 8%,
+      color-mix(in srgb, var(--phase-primary) 18%, transparent) 0%, transparent 54%),
+    linear-gradient(155deg, #201d2c 0%, #191621 100%) !important;
+  border-color: color-mix(in srgb, var(--phase-border-accent) 38%, rgba(255,255,255,.06)) !important;
+  box-shadow:   0 20px 56px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.07) !important;
+}
+body.theme-dark .app-header {
+  background:   rgba(18,15,26,.97) !important;
+  border-color: rgba(255,255,255,.07) !important;
+  box-shadow:   0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+body.theme-dark .left-dock {
+  background:   rgba(18,15,26,.96) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+body.theme-dark .mobile-bottom-nav {
+  background:      rgba(12,10,20,.97) !important;
+  border-top-color: rgba(255,255,255,.06) !important;
+  box-shadow:      0 -8px 28px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.05) !important;
+}
+body.theme-dark select {
+  background-color:    rgba(24,20,34,.92) !important;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
+  background-repeat:   no-repeat !important;
+  background-position: right 14px center !important;
+  background-size:     10px 6px !important;
+  border-color:        rgba(255,255,255,.12) !important;
+  color:               var(--text) !important;
+}
+body.theme-dark input[type="text"],
+body.theme-dark input[type="number"],
+body.theme-dark textarea {
+  background:   var(--card) !important;
+  border-color: var(--border) !important;
+  color:        var(--text) !important;
+}
+
+/* ══ 5. APP SHELL ═══════════════════════════════════════════ */
+.app-shell {
+  max-width:      1160px !important;
+  margin:         0 auto !important;
+  padding-top:    var(--sp-5) !important;
+  padding-right:  var(--sp-4) !important;
+  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)) !important;
+  padding-left:   var(--sp-4) !important;
+}
+/* Tablet: clear 60px sidebar */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .app-shell {
+    padding-left:   88px !important;
+    padding-right:  var(--sp-6) !important;
+    padding-bottom: var(--sp-10) !important;
+  }
+}
+/* Mobile */
+@media (max-width: 767px) {
+  .app-shell {
+    padding-top:    var(--sp-3) !important;
+    padding-left:   var(--sp-3) !important;
+    padding-right:  var(--sp-3) !important;
+    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+@media (max-width: 359px) {
+  .app-shell { padding-left: 10px !important; padding-right: 10px !important; }
+}
+
+/* ══ 6. DASHBOARD SCREEN ════════════════════════════════════ */
+#screen-dashboard.active {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            var(--sp-5) !important;
+  max-width:      860px !important;
+}
+
+/* ══ 7. HEADER ══════════════════════════════════════════════ */
+.app-header {
+  border-radius: var(--r-lg) !important;
+  padding:       var(--sp-4) var(--sp-5) !important;
+}
+@media (max-width: 767px) {
+  .app-header { padding: var(--sp-3) var(--sp-4) !important; border-radius: var(--r-md) !important; }
+}
+.brand h1 {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      clamp(24px, 4.5vw, 36px) !important;
+  font-weight:    700 !important;
+  letter-spacing: -0.03em !important;
+  line-height:    1.0 !important;
+}
+.app-header::after {
+  animation:  none !important;
+  background: linear-gradient(90deg, var(--phase-primary), var(--phase-secondary) 45%, var(--phase-primary)) !important;
+  height:     2px !important;
+  opacity:    0.6 !important;
+  margin:     10px -16px -12px !important;
+}
+body.theme-dark .app-header::after { opacity: 0.32 !important; }
+
+/* ══ 8. HERO CARD ═══════════════════════════════════════════ */
+.dashboard-home-hero {
+  padding:       clamp(20px, 5vw, 32px) !important;
+  border-radius: var(--r-xl) !important;
+  background:
+    radial-gradient(ellipse 80% 55% at 8% 6%,
+      color-mix(in srgb, var(--phase-primary) 16%, transparent) 0%, transparent 52%),
+    radial-gradient(ellipse 55% 42% at 93% 90%,
+      color-mix(in srgb, var(--phase-secondary) 10%, transparent) 0%, transparent 48%),
+    linear-gradient(155deg,
+      color-mix(in srgb, var(--phase-bg-from) 88%, white) 0%,
+      color-mix(in srgb, var(--phase-bg-to) 82%, white) 100%) !important;
+  box-shadow:    var(--sh-hero) !important;
+  border-color:  color-mix(in srgb, var(--phase-border-accent) 58%, rgba(255,255,255,.5)) !important;
+}
+
+/* Grid: stacked on mobile, side-by-side at ≥480px */
+.dashboard-home-hero__grid {
+  display:        flex !important;
+  flex-direction: column !important;
+  align-items:    center !important;
+  gap:            var(--sp-4) !important;
+  text-align:     center !important;
+}
+@media (min-width: 480px) {
+  .dashboard-home-hero__grid {
+    flex-direction: row !important;
+    align-items:    center !important;
+    gap:            var(--sp-5) !important;
+    text-align:     left !important;
+  }
+}
+
+/* Ring column */
+.hero-ring-col {
+  flex-shrink:    0 !important;
+  width:          min(172px, 54vw) !important;
+  display:        flex !important;
+  flex-direction: column !important;
+  align-items:    center !important;
+  gap:            var(--sp-2) !important;
+  order:          -1 !important;
+}
+@media (min-width: 480px) {
+  .hero-ring-col { width: min(160px, 30vw) !important; order: 1 !important; }
+}
+@media (min-width: 768px)  { .hero-ring-col { width: min(188px, 24vw) !important; } }
+@media (min-width: 1100px) { .hero-ring-col { width: 210px !important; } }
+
+.hero-ring-col svg, .hero-ring-col .cycle-ritual-ring {
+  width:  100% !important;
+  height: auto !important;
+  filter: drop-shadow(0 10px 26px color-mix(in srgb, var(--phase-primary) 24%, transparent)) !important;
+}
+
+/* Text column */
+.dashboard-home-hero__text-col {
+  flex:       1 !important;
+  min-width:  0 !important;
+  text-align: center !important;
+}
+@media (min-width: 480px) {
+  .dashboard-home-hero__text-col { text-align: left !important; }
+}
+
+/* Phase name — dominant serif anchor */
+.dashboard-home-hero__phase {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      clamp(22px, 6vw, 38px) !important;
+  letter-spacing: -0.025em !important;
+  line-height:    1.05 !important;
+  margin-bottom:  var(--sp-2) !important;
+  color:          var(--phase-text-accent) !important;
+}
+
+/* Greeting / soul line */
+.dashboard-home-hero__greet,
+.dashboard-home-hero__soul-line,
+.dashboard-home-hero__phase-focus-line,
+.dashboard-home-hero__focus-line {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      clamp(17px, 4.5vw, 22px) !important;
+  line-height:    1.32 !important;
+  font-weight:    600 !important;
+  color:          var(--text) !important;
+  margin:         0 0 var(--sp-3) !important;
+  letter-spacing: -0.01em !important;
+}
+@media (min-width: 600px) {
+  .dashboard-home-hero__greet,
+  .dashboard-home-hero__soul-line,
+  .dashboard-home-hero__phase-focus-line {
+    font-size: clamp(18px, 3.5vw, 24px) !important;
+  }
+}
+
+/* Meta line (Day X · Phase) */
+.dashboard-home-hero__meta {
+  font-size:     var(--fs-base) !important;
+  color:         var(--muted) !important;
+  margin-bottom: var(--sp-2) !important;
+  line-height:   1.4 !important;
+}
+
+/* Body micro-text */
+.dashboard-home-hero__micro {
+  font-size:     var(--fs-base) !important;
+  line-height:   1.55 !important;
+  color:         var(--text) !important;
+  opacity:       0.85 !important;
+  margin-bottom: var(--sp-4) !important;
+}
+@media (max-width: 479px) {
+  .dashboard-home-hero__micro {
+    font-size:     12px !important;
+    opacity:       0.72 !important;
+    margin-bottom: var(--sp-3) !important;
+  }
+  .dashboard-home-hero__primary-wrap { text-align: center !important; }
+  .phase-quick-strip { justify-content: center !important; }
+}
+
+/* Primary CTA */
+.dashboard-home-hero__primary {
+  border-radius:  var(--r-full) !important;
+  font-size:      var(--fs-lg) !important;
+  font-weight:    600 !important;
+  padding:        11px 22px !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Very small screens */
+@media (max-width: 359px) {
+  .dashboard-home-hero      { padding: 14px !important; }
+  .hero-ring-col            { width: min(136px, 48vw) !important; }
+  .dashboard-home-hero__phase { font-size: clamp(20px, 7.5vw, 26px) !important; }
+  .dashboard-home-hero__greet,
+  .dashboard-home-hero__soul-line,
+  .dashboard-home-hero__phase-focus-line { font-size: clamp(15px, 5.5vw, 18px) !important; }
+}
+
+/* Phase hero card (alternate) */
+.phase-hero-card {
+  border-radius: var(--r-xl) !important;
+  padding:       clamp(18px, 4.5vw, 28px) !important;
+}
+.phase-hero-name {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      clamp(22px, 5.5vw, 32px) !important;
+  letter-spacing: -0.02em !important;
+}
+
+/* ══ 9. DONUT RING ═══════════════════════════════════════════ */
+.cycle-ritual-ring {
+  width:    100% !important;
+  max-width: none !important;
+  overflow: visible !important;
+}
+/* Ring text inside donut */
+.cycle-ring-phase {
+  font-family: var(--font-serif) !important;
+  font-style:  italic !important;
+  font-size:   14px !important;
+  font-weight: 600 !important;
+  fill:        var(--phase-text-accent) !important;
+}
+.cycle-ring-daycount {
+  font-size:   13px !important;
+  font-weight: 600 !important;
+  fill:        var(--phase-text-accent) !important;
+}
+/* Glowing bar */
+#dashCycleRingBar {
+  stroke:        url(#bloomCycleGradient) !important;
+  filter:        drop-shadow(0 0 6px color-mix(in srgb, var(--phase-primary) 42%, transparent)) !important;
+  transition:    stroke-dashoffset 1s cubic-bezier(.2,.9,.2,1) !important;
+}
+
+/* Phase arc wrap */
+.phase-arc-wrap {
+  width:  min(148px, 42vw) !important;
+  height: min(148px, 42vw) !important;
+  filter: drop-shadow(0 8px 22px color-mix(in srgb, var(--phase-primary) 22%, transparent)) !important;
+}
+@media (max-width: 767px) {
+  .phase-arc-wrap { width: min(128px, 40vw) !important; height: min(128px, 40vw) !important; }
+}
+
+/* ══ 10. CARD SYSTEM ═════════════════════════════════════════ */
+.card {
+  border-radius: var(--r-lg) !important;
+  box-shadow:    var(--sh-md) !important;
+  background:    rgba(255,255,255,0.88) !important;
+  border-color:  rgba(220,215,235,0.7) !important;
+  transition:    transform 180ms cubic-bezier(0.22,1,0.36,1),
+                 box-shadow 200ms ease !important;
+}
+@media (hover: hover) {
+  .card:hover { transform: translateY(-2px) !important; box-shadow: var(--sh-lg) !important; }
+}
+
+/* ══ 11. GRID SYSTEM ══════════════════════════════════════════ */
+.grid { gap: var(--sp-4) !important; }
+.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+.grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+@media (max-width: 767px) {
+  .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr !important; }
+}
+@media (min-width: 480px) and (max-width: 767px) {
+  .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+.snapshot-strip {
+  display:               grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap:                   var(--sp-3) !important;
+}
+
+/* ══ 12. BOTTOM NAVIGATION ═══════════════════════════════════ */
+.mobile-bottom-nav {
+  background:           rgba(252,250,255,0.95) !important;
+  border-top:           1px solid rgba(215,210,235,0.5) !important;
+  backdrop-filter:      blur(28px) !important;
+  -webkit-backdrop-filter: blur(28px) !important;
+  box-shadow:           0 -8px 28px rgba(17,16,22,.09),
+                        inset 0 1px 0 rgba(255,255,255,.95) !important;
+  padding: 4px
+           max(8px, env(safe-area-inset-right, 0px))
+           calc(4px + env(safe-area-inset-bottom, 0px))
+           max(8px, env(safe-area-inset-left, 0px)) !important;
+}
+.mobile-bottom-nav-inner {
+  max-width: 500px !important;
+  margin:    0 auto !important;
+  gap:       0 !important;
+}
+.mob-nav-btn {
+  display:         flex !important;
+  flex-direction:  column !important;
+  align-items:     center !important;
+  justify-content: center !important;
+  gap:             3px !important;
+  font-size:       10px !important;
+  font-weight:     600 !important;
+  letter-spacing:  0.025em !important;
+  color:           var(--muted) !important;
+  padding:         8px 4px 6px !important;
+  border-radius:   14px !important;
+  border:          none !important;
+  background:      transparent !important;
+  cursor:          pointer !important;
+  flex:            1 1 0 !important;
+  min-width:       0 !important;
+  min-height:      48px !important;
+  transition:      color .13s ease, background .13s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.mob-nav-btn.active {
+  color:      var(--phase-text-accent) !important;
+  background: color-mix(in srgb, var(--phase-card-accent) 78%, transparent) !important;
+}
+.mob-nav-btn.active::after { display: none !important; }
+.mob-nav-btn.active svg {
+  transform: scale(1.14) translateY(-1px) !important;
+  filter:    drop-shadow(0 2px 5px color-mix(in srgb, var(--phase-primary) 32%, transparent)) !important;
+}
+body.theme-dark .mob-nav-btn       { color: var(--muted) !important; }
+body.theme-dark .mob-nav-btn.active {
+  background: color-mix(in srgb, var(--phase-primary) 16%, rgba(255,255,255,.04)) !important;
+  color:      var(--phase-text-accent) !important;
+}
+.mob-nav-dot {
+  width:         4px !important;
+  height:        4px !important;
+  border-radius: 50% !important;
+  background:    transparent !important;
+  margin:        1px auto 0 !important;
+  transition:    background .13s ease !important;
+}
+.mob-nav-btn.active .mob-nav-dot { background: var(--phase-primary) !important; }
+@media (max-width: 359px) {
+  .mob-nav-btn { font-size: 9px !important; padding: 8px 2px 5px !important; }
+}
+@media (max-width: 330px) {
+  .mob-nav-label { display: none !important; }
+  .mob-nav-btn   { gap: 0 !important; padding: 10px 6px !important; }
+}
+
+/* ══ 13. LEFT DOCK ═══════════════════════════════════════════ */
+.left-dock {
+  position:        fixed !important;
+  left:            12px !important;
+  top:             50% !important;
+  transform:       translateY(-50%) !important;
+  z-index:         45 !important;
+  width:           58px !important;
+  border-radius:   20px !important;
+  background:      rgba(255,255,255,.92) !important;
+  border:          1px solid rgba(255,255,255,.72) !important;
+  box-shadow:      0 8px 32px rgba(17,16,22,.09),
+                   inset 0 1px 0 rgba(255,255,255,.95) !important;
+  backdrop-filter: blur(14px) !important;
+  -webkit-backdrop-filter: blur(14px) !important;
+  padding:         10px 6px !important;
+  display:         none !important;
+  flex-direction:  column !important;
+  align-items:     center !important;
+  gap:             4px !important;
+}
+@media (min-width: 768px) { .left-dock { display: flex !important; } }
+/* Sidebar clearance fix (overrides layout-stabilisation-final) */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .app-shell { padding-left: 88px !important; }
+}
+
+/* ══ 14. SELECT DROPDOWNS ════════════════════════════════════ */
+select {
+  -webkit-appearance: none !important;
+  appearance:         none !important;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E") !important;
+  background-repeat:   no-repeat !important;
+  background-position: right 14px center !important;
+  background-size:     10px 6px !important;
+  padding-right:       36px !important;
+  border-radius:       var(--r-base) !important;
+  border:              1px solid var(--border, #e5e7eb) !important;
+  font-size:           var(--fs-md) !important;
+}
+
+/* ══ 15. PROGRESS + PROGRESS SCREEN ══════════════════════════ */
+#screen-progress .card { box-shadow: 0 6px 22px rgba(17,16,22,.09) !important; }
+
+/* ══ 16. WORKOUT SCREEN HERO ══════════════════════════════════ */
+#screen-daily-workout > .card:first-child {
+  border-radius: var(--r-xl) !important;
+  background:
+    radial-gradient(ellipse 70% 50% at 5% 0%,
+      color-mix(in srgb, var(--phase-primary) 14%, transparent) 0%, transparent 56%),
+    linear-gradient(148deg,
+      color-mix(in srgb, var(--phase-bg-from) 90%, white) 0%,
+      color-mix(in srgb, var(--phase-bg-to) 80%, white) 100%) !important;
+}
+
+/* ══ 17. SECTION TITLES + KICKERS ════════════════════════════ */
+.section-title {
+  font-size:      clamp(15px, 2.5vw, 18px) !important;
+  font-weight:    700 !important;
+  letter-spacing: -0.02em !important;
+  line-height:    1.25 !important;
+}
+.kicker {
+  font-size:      var(--fs-xs) !important;
+  font-weight:    700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color:          var(--muted) !important;
+}
+
+/* ══ 18. DASHBOARD CARD EYEBROWS + LEADS ════════════════════ */
+.dashboard-card__eyebrow {
+  font-size:      var(--fs-xs) !important;
+  font-weight:    700 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase !important;
+  color:          var(--muted) !important;
+  margin-bottom:  var(--sp-2) !important;
+}
+.dashboard-card__headline {
+  font-size:      clamp(17px, 3vw, 22px) !important;
+  font-weight:    700 !important;
+  letter-spacing: -0.02em !important;
+  line-height:    1.2 !important;
+  margin-bottom:  var(--sp-2) !important;
+}
+.dashboard-card__lead {
+  font-size:   var(--fs-md) !important;
+  line-height: 1.5 !important;
+  color:       var(--text) !important;
+}
+.dashboard-card__affirm {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      var(--fs-base) !important;
+  color:          var(--phase-text-accent) !important;
+  line-height:    1.55 !important;
+  margin-top:     var(--sp-2) !important;
+}
+
+/* ══ 19. WEEK-PREVIEW + ENERGY PREVIEW ══════════════════════ */
+body.theme-dark .week-preview,
+body.theme-dark .energy-preview-section,
+body.theme-dark [class*="week-card"] {
+  background:   linear-gradient(145deg, #1e1b2a, #18152090) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+body.theme-dark .educational-block {
+  background:   color-mix(in srgb, var(--phase-primary) 10%, #1a1724) !important;
+  border-color: color-mix(in srgb, var(--phase-primary) 18%, rgba(255,255,255,.06)) !important;
+}
+
+/* ══ 20. FORMS + INPUTS ══════════════════════════════════════ */
+input[type="text"], input[type="number"], input[type="email"], textarea {
+  border-radius: var(--r-base) !important;
+  border:        1px solid var(--border, #e5e7eb) !important;
+  font-size:     var(--fs-md) !important;
+  padding:       10px 14px !important;
+  transition:    border-color .15s ease, box-shadow .15s ease !important;
+}
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: var(--phase-primary) !important;
+  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 16%, transparent) !important;
+  outline:      none !important;
+}
+
+/* ══ 21. ONBOARDING — MULTI-STEP FOUNDATION ═════════════════ */
+
+/* Overlay */
+.onboarding-overlay {
+  position:        fixed !important;
+  inset:           0 !important;
+  z-index:         10001 !important;
+  display:         flex !important;
+  align-items:     flex-start !important;
+  justify-content: center !important;
+  background:
+    radial-gradient(120% 80% at 50% 0%,
+      color-mix(in srgb, var(--phase-card-accent) 38%, #f3f0fa),
+      rgba(248,247,251,.97)) !important;
+  padding: max(16px, env(safe-area-inset-top))
+           max(16px, env(safe-area-inset-right))
+           max(16px, env(safe-area-inset-bottom))
+           max(16px, env(safe-area-inset-left)) !important;
+  overflow-y:      auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  flex-direction:  column !important;
+  gap:             16px !important;
+}
+body.theme-dark .onboarding-overlay {
+  background:
+    radial-gradient(100% 70% at 50% 0%,
+      color-mix(in srgb, var(--phase-card-accent) 14%, #121018),
+      rgba(10,9,14,.97)) !important;
+}
+
+/* Progress dots */
+.ob-progress {
+  display:         flex !important;
+  align-items:     center !important;
+  justify-content: center !important;
+  gap:             8px !important;
+  padding-top:     4px !important;
+  flex-shrink:     0 !important;
+}
+.ob-dot {
+  width:        8px !important;
+  height:       8px !important;
+  border-radius: 50% !important;
+  background:   rgba(167,139,250,0.28) !important;
+  transition:   background .22s ease, width .22s ease, border-radius .22s ease !important;
+}
+.ob-dot--active {
+  width:      24px !important;
+  background: var(--phase-primary) !important;
+  border-radius: 4px !important;
+}
+.ob-dot--done { background: color-mix(in srgb, var(--phase-primary) 55%, transparent) !important; }
+
+/* Onboarding card (panel container) */
+.onboarding-card {
+  width:         100% !important;
+  max-width:     480px !important;
+  border-radius: var(--r-xl) !important;
+  padding:       clamp(24px, 6vw, 36px) !important;
+  background:    rgba(255,255,255,.96) !important;
+  border:        1px solid rgba(220,215,235,.6) !important;
+  box-shadow:    var(--sh-hero) !important;
+  position:      relative !important;
+}
+.onboarding-card--branded {
+  background:
+    linear-gradient(168deg,
+      color-mix(in srgb, var(--phase-card-accent) 28%, rgba(255,255,255,.98)),
+      rgba(255,255,255,.95)) !important;
+  border-color: color-mix(in srgb, var(--phase-border-accent) 48%, rgba(255,255,255,.7)) !important;
+}
+body.theme-dark .onboarding-card {
+  background:   color-mix(in srgb, #1a1724 94%, var(--phase-card-accent)) !important;
+  border-color: rgba(255,255,255,.09) !important;
+}
+body.theme-dark .onboarding-card--branded {
+  background:
+    linear-gradient(168deg,
+      color-mix(in srgb, var(--phase-card-accent) 22%, #1c1a22),
+      #15131a) !important;
+  border-color: color-mix(in srgb, var(--phase-border-accent) 35%, var(--border)) !important;
+}
+
+/* Panel animation */
+@keyframes ob-slide-in {
+  from { opacity: 0; transform: translateY(14px) scale(.985); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.ob-panel--active {
+  animation: ob-slide-in .28s cubic-bezier(0.22, 1, 0.36, 1) both !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ob-panel--active { animation: none !important; }
+}
+
+/* Brand header */
+.onboarding-brand {
+  display:         flex !important;
+  align-items:     center !important;
+  gap:             12px !important;
+  margin-bottom:   var(--sp-5) !important;
+  padding-bottom:  var(--sp-5) !important;
+  border-bottom:   1px solid var(--phase-border-accent, rgba(220,215,235,.6)) !important;
+}
+.onboarding-brand__emoji { font-size: 32px !important; flex-shrink: 0 !important; }
+.onboarding-brand__name {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-weight:    700 !important;
+  font-size:      clamp(22px, 4.2vw, 28px) !important;
+  margin:         0 !important;
+  line-height:    1.12 !important;
+  color:          var(--phase-text-accent, #5f4ea1) !important;
+  letter-spacing: .01em !important;
+}
+.onboarding-brand__tagline {
+  font-size:  var(--fs-sm) !important;
+  color:      var(--muted) !important;
+  margin:     3px 0 0 !important;
+  line-height: 1.4 !important;
+}
+
+/* Headings + lead */
+.onboarding-heading {
+  font-size:      clamp(18px, 3.2vw, 22px) !important;
+  font-weight:    700 !important;
+  margin:         0 0 var(--sp-2) !important;
+  letter-spacing: -0.02em !important;
+  line-height:    1.2 !important;
+  color:          var(--text) !important;
+}
+body.theme-dark .onboarding-overlay .onboarding-heading { color: #fecdd3 !important; }
+.onboarding-lead {
+  font-size:     var(--fs-base) !important;
+  color:         var(--muted) !important;
+  line-height:   1.55 !important;
+  margin:        0 0 var(--sp-5) !important;
+}
+
+/* Step content spacing */
+.ob-step-content { margin-bottom: var(--sp-5) !important; }
+
+/* Privacy note */
+.ob-privacy-note {
+  display:        flex !important;
+  align-items:    center !important;
+  gap:            6px !important;
+  font-size:      var(--fs-sm) !important;
+  color:          var(--muted) !important;
+  margin-top:     var(--sp-3) !important;
+  padding:        8px 12px !important;
+  border-radius:  var(--r-sm) !important;
+  background:     color-mix(in srgb, var(--phase-card-accent) 38%, rgba(248,247,251,.8)) !important;
+  border:         1px solid color-mix(in srgb, var(--phase-border-accent) 35%, transparent) !important;
+}
+.ob-privacy-icon { font-size: 13px !important; }
+
+/* Back button */
+.ob-back-btn {
+  display:         flex !important;
+  align-items:     center !important;
+  gap:             6px !important;
+  font-size:       var(--fs-base) !important;
+  font-weight:     600 !important;
+  color:           var(--muted) !important;
+  background:      transparent !important;
+  border:          none !important;
+  padding:         0 0 var(--sp-4) !important;
+  cursor:          pointer !important;
+  min-height:      auto !important;
+  -webkit-tap-highlight-color: transparent !important;
+  transition:      color .12s ease !important;
+}
+.ob-back-btn:hover { color: var(--text) !important; }
+
+/* Actions row */
+.ob-actions {
+  display:        flex !important;
+  flex-direction: column !important;
+  gap:            var(--sp-2) !important;
+  margin-top:     var(--sp-4) !important;
+}
+.ob-next {
+  width:          100% !important;
+  font-size:      var(--fs-lg) !important;
+  font-weight:    600 !important;
+  border-radius:  var(--r-full) !important;
+  padding:        13px 22px !important;
+  letter-spacing: -0.01em !important;
+}
+.ob-skip-btn {
+  background:      transparent !important;
+  border:          none !important;
+  color:           var(--muted) !important;
+  font-size:       var(--fs-sm) !important;
+  font-weight:     500 !important;
+  min-height:      auto !important;
+  padding:         6px 0 !important;
+  text-align:      center !important;
+  cursor:          pointer !important;
+}
+.ob-skip-btn:hover { color: var(--text) !important; }
+
+/* ── Phase Cards (Step 2) ─────────────────────────── */
+.ob-phase-grid {
+  display:               grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap:                   var(--sp-3) !important;
+  margin-bottom:         var(--sp-5) !important;
+}
+.ob-phase-card {
+  display:         flex !important;
+  flex-direction:  column !important;
+  align-items:     flex-start !important;
+  gap:             4px !important;
+  padding:         14px 16px !important;
+  border-radius:   var(--r-md) !important;
+  border:          2px solid rgba(220,215,235,.55) !important;
+  background:      rgba(255,255,255,.7) !important;
+  cursor:          pointer !important;
+  text-align:      left !important;
+  min-height:      96px !important;
+  transition:      border-color .15s ease, background .15s ease, transform .12s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.ob-phase-card:hover  { border-color: var(--phase-border-accent) !important; background: color-mix(in srgb, var(--phase-card-accent) 44%, white) !important; }
+.ob-phase-card:active { transform: scale(.97) !important; }
+.ob-phase-card--selected {
+  border-color: var(--phase-primary) !important;
+  background:   color-mix(in srgb, var(--phase-card-accent) 62%, white) !important;
+  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 18%, transparent) !important;
+}
+body.theme-dark .ob-phase-card {
+  background:   var(--card) !important;
+  border-color: var(--border) !important;
+}
+body.theme-dark .ob-phase-card--selected {
+  border-color: var(--phase-primary) !important;
+  background:   color-mix(in srgb, var(--phase-card-accent) 35%, var(--card)) !important;
+}
+.ob-phase-card__emoji {
+  font-size:   22px !important;
+  line-height: 1 !important;
+  margin-bottom: 2px !important;
+}
+.ob-phase-card__name {
+  font-size:      var(--fs-md) !important;
+  font-weight:    700 !important;
+  color:          var(--text) !important;
+  letter-spacing: -0.01em !important;
+  line-height:    1.2 !important;
+}
+.ob-phase-card__hint {
+  font-size:   var(--fs-sm) !important;
+  color:       var(--muted) !important;
+  line-height: 1.4 !important;
+}
+
+/* ── Cycle-length stepper ─────────────────────────── */
+.ob-cycle-length-row {
+  display:     flex !important;
+  align-items: center !important;
+  gap:         var(--sp-3) !important;
+  flex-wrap:   wrap !important;
+}
+.ob-cycle-label {
+  font-size:   var(--fs-md) !important;
+  font-weight: 600 !important;
+  color:       var(--text) !important;
+  flex-shrink: 0 !important;
+}
+.ob-stepper {
+  display:     flex !important;
+  align-items: center !important;
+  gap:         0 !important;
+  border:      1px solid var(--border, #e5e7eb) !important;
+  border-radius: var(--r-base) !important;
+  overflow:    hidden !important;
+  background:  var(--card, white) !important;
+}
+.ob-stepper-btn {
+  width:            40px !important;
+  height:           40px !important;
+  display:          flex !important;
+  align-items:      center !important;
+  justify-content:  center !important;
+  font-size:        20px !important;
+  font-weight:      300 !important;
+  border:           none !important;
+  background:       transparent !important;
+  color:            var(--phase-text-accent) !important;
+  cursor:           pointer !important;
+  min-height:       40px !important;
+  transition:       background .12s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.ob-stepper-btn:hover { background: color-mix(in srgb, var(--phase-card-accent) 50%, transparent) !important; }
+.ob-stepper input[type="number"] {
+  width:       52px !important;
+  text-align:  center !important;
+  border:      none !important;
+  border-left: 1px solid var(--border, #e5e7eb) !important;
+  border-right:1px solid var(--border, #e5e7eb) !important;
+  border-radius: 0 !important;
+  font-size:   var(--fs-md) !important;
+  font-weight: 700 !important;
+  padding:     0 !important;
+  height:      40px !important;
+  background:  transparent !important;
+  color:       var(--text) !important;
+  -webkit-appearance: textfield !important;
+  appearance:  textfield !important;
+}
+.ob-stepper input[type="number"]::-webkit-outer-spin-button,
+.ob-stepper input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none !important; }
+.ob-cycle-hint {
+  font-size:  var(--fs-sm) !important;
+  color:      var(--muted) !important;
+}
+
+/* ── Energy buttons (Step 3) ──────────────────────── */
+.ob-energy-grid {
+  display:               grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap:                   var(--sp-3) !important;
+  margin-bottom:         var(--sp-2) !important;
+}
+@media (min-width: 400px) {
+  .ob-energy-grid { grid-template-columns: repeat(4, 1fr) !important; }
+}
+.ob-energy-btn {
+  display:         flex !important;
+  flex-direction:  column !important;
+  align-items:     center !important;
+  gap:             4px !important;
+  padding:         12px 8px !important;
+  border-radius:   var(--r-md) !important;
+  border:          2px solid rgba(220,215,235,.55) !important;
+  background:      rgba(255,255,255,.7) !important;
+  cursor:          pointer !important;
+  text-align:      center !important;
+  min-height:      84px !important;
+  transition:      border-color .15s ease, background .15s ease, transform .12s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.ob-energy-btn:active { transform: scale(.97) !important; }
+.ob-energy-btn--selected {
+  border-color: var(--phase-primary) !important;
+  background:   color-mix(in srgb, var(--phase-card-accent) 58%, white) !important;
+  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 18%, transparent) !important;
+}
+body.theme-dark .ob-energy-btn {
+  background:   var(--card) !important;
+  border-color: var(--border) !important;
+}
+body.theme-dark .ob-energy-btn--selected {
+  border-color: var(--phase-primary) !important;
+  background:   color-mix(in srgb, var(--phase-card-accent) 35%, var(--card)) !important;
+}
+.ob-energy-icon  { font-size: 20px !important; line-height: 1 !important; }
+.ob-energy-label { font-size: var(--fs-md) !important; font-weight: 700 !important; color: var(--text) !important; line-height: 1.2 !important; }
+.ob-energy-hint  { font-size: var(--fs-sm) !important; color: var(--muted) !important; line-height: 1.35 !important; }
+
+/* ── Goal section (Step 3) ────────────────────────── */
+.ob-goal-section {
+  margin-top:    var(--sp-5) !important;
+  padding-top:   var(--sp-5) !important;
+  border-top:    1px solid rgba(220,215,235,.5) !important;
+}
+.ob-goal-label {
+  font-size:      var(--fs-md) !important;
+  font-weight:    700 !important;
+  color:          var(--text) !important;
+  margin:         0 0 var(--sp-3) !important;
+  display:        block !important;
+  letter-spacing: -0.01em !important;
+}
+
+/* Goal grid */
+.onboarding-goal-grid {
+  display:               grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap:                   var(--sp-2) !important;
+}
+.goal-btn {
+  padding:       10px 14px !important;
+  border-radius: var(--r-base) !important;
+  border:        2px solid rgba(220,215,235,.55) !important;
+  background:    rgba(255,255,255,.7) !important;
+  font-size:     var(--fs-base) !important;
+  font-weight:   600 !important;
+  color:         var(--text) !important;
+  cursor:        pointer !important;
+  text-align:    left !important;
+  min-height:    44px !important;
+  transition:    border-color .15s ease, background .15s ease !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+.goal-btn.active {
+  border-color: var(--phase-primary) !important;
+  background:   color-mix(in srgb, var(--phase-card-accent) 60%, white) !important;
+  color:        var(--phase-text-accent) !important;
+}
+body.theme-dark .goal-btn        { background: var(--card) !important; border-color: var(--border) !important; color: var(--text) !important; }
+body.theme-dark .goal-btn.active { background: color-mix(in srgb, var(--phase-card-accent) 35%, var(--card)) !important; border-color: var(--phase-primary) !important; color: var(--phase-text-accent) !important; }
+
+/* Footnote */
+.onboarding-footnote {
+  font-size:   var(--fs-sm) !important;
+  color:       var(--muted) !important;
+  margin:      0 0 var(--sp-3) !important;
+  line-height: 1.55 !important;
+}
+
+/* ══ 22. SCREENSHOT / DEMO MODE ══════════════════════════════ */
+body.visual-review-mode .onboarding-overlay,
+.visual-review-mode .onboarding-overlay { display: none !important; }
+body[data-screenshot="1"] .onboarding-overlay { display: none !important; }
+
+/* ══ 23. SECTION CARDS — DASHBOARD RHYTHM ════════════════════ */
+.dashboard-card { border-radius: var(--r-lg) !important; }
+.dashboard-card--featured {
+  border-radius:  var(--r-xl) !important;
+  padding:        clamp(18px, 4vw, 28px) !important;
+}
+.dashboard-card--alignment,
+.dashboard-card--support {
+  padding: clamp(14px, 3.5vw, 20px) !important;
+}
+.dashboard-support-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+  gap:     var(--sp-4) !important;
+}
+@media (max-width: 579px) {
+  .dashboard-support-grid { grid-template-columns: 1fr !important; }
+}
+
+/* ══ 24. STAT CHIPS ═══════════════════════════════════════════ */
+.stat-chip {
+  padding:       var(--sp-3) !important;
+  border-radius: var(--r-base) !important;
+  border:        1px solid rgba(220,215,235,.5) !important;
+  background:    rgba(255,255,255,.72) !important;
+  text-align:    center !important;
+}
+body.theme-dark .stat-chip {
+  background:   rgba(255,255,255,.04) !important;
+  border-color: var(--border) !important;
+}
+.stat-value {
+  display:        block !important;
+  font-size:      clamp(18px, 4vw, 24px) !important;
+  font-weight:    800 !important;
+  letter-spacing: -0.03em !important;
+  line-height:    1 !important;
+  color:          var(--phase-text-accent) !important;
+  margin-bottom:  3px !important;
+}
+.stat-label {
+  display:     block !important;
+  font-size:   var(--fs-xs) !important;
+  color:       var(--muted) !important;
+  line-height: 1.35 !important;
+}
+
+/* ══ 25. TAGS + PILLS ════════════════════════════════════════ */
+.tag {
+  border-radius: var(--r-full) !important;
+  font-size:     var(--fs-sm) !important;
+  font-weight:   600 !important;
+  padding:       4px 10px !important;
+  display:       inline-flex !important;
+  align-items:   center !important;
+}
+.pill {
+  border-radius: var(--r-full) !important;
+  font-size:     var(--fs-sm) !important;
+  padding:       3px 9px !important;
+}
+
+/* ══ 26. BUTTONS ════════════════════════════════════════════ */
+.btn {
+  border-radius:  var(--r-full) !important;
+  font-size:      var(--fs-md) !important;
+  font-weight:    600 !important;
+  letter-spacing: -0.01em !important;
+  transition:     transform .12s ease, box-shadow .12s ease, background .15s ease !important;
+}
+.btn:active { transform: scale(.97) !important; }
+@media (hover: hover) {
+  .btn:not(.secondary):hover { box-shadow: 0 4px 16px color-mix(in srgb, var(--phase-primary) 28%, transparent) !important; }
+}
+
+/* ══ 27. MILESTONE / TOAST ═══════════════════════════════════ */
+.toast {
+  border-radius: var(--r-xl) !important;
+  font-size:     var(--fs-md) !important;
+  font-weight:   600 !important;
+}
+
+/* ══ 28. DESKTOP MAX-WIDTH CONSTRAINT ════════════════════════ */
+@media (min-width: 900px) {
+  .mobile-bottom-nav { display: none !important; }
+}
+
+/* ══ 29. TABLET LAYOUT ═══════════════════════════════════════ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  #screen-dashboard.active { max-width: 720px !important; }
+}
+
+/* ══ 30. REDUCED MOTION ══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .ob-panel--active,
+  .dashboard-home-hero, .card,
+  .btn, .mob-nav-btn { animation: none !important; transition: none !important; }
+}
+
+/* ══ 31. PRINT ═══════════════════════════════════════════════ */
+@media print {
+  .mobile-bottom-nav, .left-dock, .quick-log-bar { display: none !important; }
+  .app-shell { max-width: 100% !important; padding: 0 !important; }
+}
+</style>
+
+<style id="bloom-polish-v1">
+/*
+  ══════════════════════════════════════════════════════════════
+  BLOOM — PRECISION POLISH v1  (2026-05-06)
+  Post-Foundation: micro-precision, hierarchy tightening,
+  responsive stabilisation, premium finish layer.
+  ══════════════════════════════════════════════════════════════
+*/
+
+/* ── P1. HERO: RING COLUMN CLEANUP ──────────────────────── */
+/* Remove weak filler label under donut ring */
+.dashboard-home-hero__donut-label { display: none !important; }
+
+/* Ring col: tighter gap between ring, phase strip, label */
+.hero-ring-col {
+  gap: var(--sp-1) !important;
+}
+/* Phase strip: premium 4px pill under ring */
+.hero-phase-strip {
+  width: 100%;
+  margin-top: var(--sp-2) !important;
+}
+.hero-phase-strip__bar {
+  height: 4px !important;
+  border-radius: var(--r-full) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  position: relative !important;
+}
+.hero-phase-strip__dot {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 9px !important; height: 9px !important;
+  border-radius: 50% !important;
+  background: var(--phase-primary) !important;
+  border: 1.5px solid rgba(255,255,255,.95) !important;
+  box-shadow: 0 1px 4px rgba(0,0,0,.18) !important;
+}
+body.theme-dark .hero-phase-strip__dot { border-color: rgba(30,26,38,.9) !important; }
+.hero-phase-strip__label {
+  font-size: 10px !important;
+  color: var(--muted) !important;
+  margin-top: 5px !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  letter-spacing: 0.015em !important;
+}
+
+/* ── P2. HERO: TEXT COLUMN PRECISION ────────────────────── */
+/* Meta line: cycle day + phase — subdued, informational */
+.dashboard-home-hero__meta {
+  font-size: 12px !important;
+  margin-bottom: var(--sp-2) !important;
+  opacity: 0.75 !important;
+  letter-spacing: 0.01em !important;
+  line-height: 1.4 !important;
+}
+
+/* Phase direction line: italic serif accent */
+.dashboard-home-hero__phase-focus-line {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      clamp(13px, 3.4vw, 15px) !important;
+  color:          var(--phase-text-accent) !important;
+  margin-bottom:  var(--sp-2) !important;
+  opacity:        0.9 !important;
+  line-height:    1.45 !important;
+}
+
+/* Micro support text: smaller, lighter */
+.dashboard-home-hero__micro {
+  font-size:     12px !important;
+  opacity:       0.6 !important;
+  margin-bottom: var(--sp-3) !important;
+  line-height:   1.5 !important;
+}
+
+/* Soul line: tighter vertical rhythm */
+.dashboard-home-hero__soul-line {
+  line-height:   1.26 !important;
+  margin-bottom: var(--sp-2) !important;
+}
+
+/* More-actions accordion: very subtle */
+details.bloom-hero-more-actions summary.bloom-hero-more-summary {
+  font-size: 11px !important;
+  padding:   3px 0 !important;
+  opacity:   0.7 !important;
+}
+.bloom-hero-privacy {
+  margin-top: var(--sp-1) !important;
+  opacity:    0.52 !important;
+}
+
+/* ── P3. HERO CARD: MOBILE REFINEMENTS ──────────────────── */
+@media (max-width: 479px) {
+  /* Ring: bigger on mobile — dominant visual anchor */
+  .hero-ring-col { width: min(192px, 58vw) !important; }
+
+  /* Card: comfortable padding, not cramped */
+  .dashboard-home-hero { padding: 22px 18px 20px !important; }
+
+  /* Stack gap: enough breathing room */
+  .dashboard-home-hero__grid { gap: var(--sp-5) !important; }
+
+  /* Soul line: tighter at 390 */
+  .dashboard-home-hero__soul-line {
+    font-size: clamp(18px, 5.6vw, 23px) !important;
+  }
+}
+/* Very small screens: compress aggressively */
+@media (max-width: 359px) {
+  .hero-ring-col { width: min(156px, 52vw) !important; }
+  .dashboard-home-hero { padding: 16px 14px !important; }
+  .dashboard-home-hero__soul-line {
+    font-size: clamp(16px, 5.5vw, 19px) !important;
+    line-height: 1.22 !important;
+  }
+  .dashboard-home-hero__phase-focus-line { font-size: 12px !important; }
+  .dashboard-home-hero__micro { display: none !important; }
+}
+
+/* ── P4. HERO CARD: DESKTOP POLISH ──────────────────────── */
+@media (min-width: 900px) {
+  .dashboard-home-hero {
+    padding: clamp(28px, 3.5vw, 40px) clamp(28px, 3.5vw, 44px) !important;
+  }
+  .dashboard-home-hero__grid { gap: clamp(28px, 4vw, 48px) !important; }
+  .hero-ring-col { width: min(220px, 22vw) !important; }
+}
+
+/* ── P5. HEADER: TIGHTER MOBILE ─────────────────────────── */
+@media (max-width: 767px) {
+  .app-header {
+    padding: 10px var(--sp-4) !important;
+    border-radius: var(--r-md) !important;
+  }
+  .brand h1 {
+    font-size: clamp(22px, 6vw, 27px) !important;
+  }
+}
+/* Accent line under header: slimmer */
+.app-header::after {
+  height:  1.5px !important;
+  opacity: 0.40 !important;
+  margin:  8px -16px -10px !important;
+}
+
+/* ── P6. CARD SYSTEM REFINEMENTS ────────────────────────── */
+/* Slightly rounder on mobile for premium feel */
+@media (max-width: 479px) {
+  .card { border-radius: 20px !important; }
+  .dashboard-home-hero { border-radius: 24px !important; }
+  .dashboard-card--featured.todays-focus-premium {
+    border-radius: 22px !important;
+    padding: 22px 20px !important;
+  }
+  .todays-focus-premium .dashboard-card__headline {
+    font-size: clamp(24px, 7.5vw, 32px) !important;
+    letter-spacing: -0.04em !important;
+  }
+  .focus-illustration {
+    width: 60px !important; height: 60px !important;
+    font-size: 28px !important;
+  }
+  .focus-tags { margin: 12px 0 14px !important; }
+}
+
+/* ── P7. BOTTOM NAVIGATION: PRECISION ───────────────────── */
+/* Nav button: cleaner hit target */
+.mob-nav-btn {
+  padding:     6px 4px 5px !important;
+  min-height:  52px !important;
+  border-radius: 14px !important;
+  position:    relative !important;
+}
+/* Active: phase-tinted pill with subtle dot */
+.mob-nav-btn.active {
+  background: color-mix(in srgb, var(--phase-primary) 11%, transparent) !important;
+}
+/* Active top dot indicator */
+.mob-nav-btn.active::before {
+  content: "";
+  position: absolute;
+  top:      4px;
+  left:     50%;
+  transform: translateX(-50%);
+  width:    4px; height: 4px;
+  border-radius: 50%;
+  background: var(--phase-primary);
+}
+body.theme-dark .mob-nav-btn.active::before { background: var(--phase-text-accent); }
+/* Nav font: slightly bolder */
+.mob-nav-btn {
+  font-size:   10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+}
+
+/* ── P8. STAT CHIPS: TIGHTER, PREMIUM ───────────────────── */
+.stat-chip {
+  padding:       var(--sp-3) var(--sp-2) !important;
+  border-radius: var(--r-base) !important;
+}
+.stat-value {
+  font-size: clamp(18px, 4.5vw, 24px) !important;
+}
+.stat-label {
+  font-size:      10px !important;
+  letter-spacing: 0.03em !important;
+}
+
+/* ── P9. SECTION LABELS + KICKERS ───────────────────────── */
+.kicker,
+.dashboard-card__eyebrow {
+  font-size:      10px !important;
+  letter-spacing: 0.1em !important;
+  font-weight:    800 !important;
+}
+
+/* ── P10. DROPDOWN SELECTS: PREMIUM STYLING ─────────────── */
+.field select,
+#screen-daily-workout select {
+  appearance:          none !important;
+  -webkit-appearance:  none !important;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
+  background-repeat:   no-repeat !important;
+  background-position: right 14px center !important;
+  background-size:     9px 5px !important;
+  padding-right:       38px !important;
+  border-radius:       var(--r-base) !important;
+  border:              1px solid rgba(200,195,220,.65) !important;
+  font-size:           var(--fs-md) !important;
+  font-weight:         500 !important;
+  line-height:         1.45 !important;
+  min-height:          44px !important;
+  transition:          border-color .14s ease, box-shadow .14s ease !important;
+  cursor:              pointer !important;
+}
+.field select:focus,
+#screen-daily-workout select:focus {
+  border-color: var(--phase-primary) !important;
+  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
+  outline:      none !important;
+}
+body.theme-dark .field select,
+body.theme-dark #screen-daily-workout select {
+  background-color:  rgba(24,20,34,.85) !important;
+  background-image:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
+  border-color:      rgba(255,255,255,.12) !important;
+  color:             var(--text) !important;
+}
+
+/* ── P11. BODY CHECK-IN: PREMIUM CHIPS ──────────────────── */
+.body-checkin {
+  border-radius: var(--r-xl) !important;
+}
+.body-tone-chip {
+  border-radius:  var(--r-full) !important;
+  font-size:      12px !important;
+  font-weight:    600 !important;
+  padding:        6px 14px !important;
+  transition:     background .12s ease, border-color .12s ease, transform .1s ease,
+                  box-shadow .12s ease !important;
+}
+.body-tone-chip.selected,
+.body-tone-chip[aria-pressed="true"] {
+  background:    color-mix(in srgb, var(--phase-primary) 12%, white) !important;
+  border-color:  var(--phase-primary) !important;
+  color:         var(--phase-text-accent) !important;
+  transform:     scale(1.04) !important;
+  box-shadow:    0 0 0 2.5px color-mix(in srgb, var(--phase-primary) 16%, transparent) !important;
+}
+body.theme-dark .body-tone-chip.selected,
+body.theme-dark .body-tone-chip[aria-pressed="true"] {
+  background:   color-mix(in srgb, var(--phase-primary) 18%, var(--card)) !important;
+  border-color: var(--phase-primary) !important;
+  color:        var(--phase-text-accent) !important;
+}
+
+/* ── P12. PROGRESS SCREEN: HEATMAP ──────────────────────── */
+/* Slightly larger cells for better touch + visual weight */
+.heatmap-wrap { --hm-cell: 15px !important; --hm-gap: 3px !important; }
+.heatmap-cell {
+  border-radius: 4px !important;
+}
+.heatmap-cell.heatmap-unlogged {
+  background: color-mix(in srgb, var(--phase-card-accent) 20%,
+    rgba(200,195,220,.22)) !important;
+  border-color: rgba(200,195,215,.25) !important;
+}
+body.theme-dark .heatmap-cell.heatmap-unlogged {
+  background: rgba(255,255,255,.05) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+
+/* ── P13. ONBOARDING: RICHER ATMOSPHERE ─────────────────── */
+.onboarding-overlay {
+  background:
+    radial-gradient(ellipse 92% 58% at 50% 0%,
+      color-mix(in srgb, var(--phase-card-accent) 56%, transparent) 0%, transparent 62%),
+    radial-gradient(ellipse 55% 42% at 14% 96%,
+      color-mix(in srgb, var(--phase-secondary) 18%, transparent) 0%, transparent 52%),
+    linear-gradient(176deg, #f7f5fc 0%, #f2eff9 100%) !important;
+}
+body.theme-dark .onboarding-overlay {
+  background:
+    radial-gradient(ellipse 92% 58% at 50% 0%,
+      color-mix(in srgb, var(--phase-primary) 14%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 12% 96%,
+      color-mix(in srgb, var(--phase-primary) 7%, transparent) 0%, transparent 55%),
+    linear-gradient(176deg, #0d0b14 0%, #110e1c 100%) !important;
+}
+
+/* Onboarding card: elevated shadow */
+.onboarding-card {
+  box-shadow: 0 24px 72px rgba(17,16,22,.14), 0 6px 20px rgba(17,16,22,.08),
+              inset 0 1px 0 rgba(255,255,255,.9) !important;
+  border: 1px solid rgba(215,210,238,.6) !important;
+}
+body.theme-dark .onboarding-card {
+  box-shadow: 0 24px 72px rgba(0,0,0,.5), 0 6px 20px rgba(0,0,0,.28),
+              inset 0 1px 0 rgba(255,255,255,.05) !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+
+/* Progress dots: slightly larger, pill more pronounced */
+.ob-dot {
+  width: 9px !important; height: 9px !important;
+  flex-shrink: 0 !important;
+}
+.ob-dot--active {
+  width: 26px !important; height: 9px !important;
+}
+.ob-dot--done {
+  width: 9px !important; height: 9px !important;
+}
+
+/* Desktop: constrain card width */
+@media (min-width: 600px) {
+  .onboarding-card {
+    max-width: 456px !important;
+    margin: 0 auto !important;
+  }
+}
+
+/* Phase card selected: stronger ring */
+.ob-phase-card--selected {
+  border: 2px solid var(--phase-primary) !important;
+  background: color-mix(in srgb, var(--phase-card-accent) 70%, white) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
+}
+body.theme-dark .ob-phase-card--selected {
+  background: color-mix(in srgb, var(--phase-card-accent) 38%, var(--card)) !important;
+}
+
+/* ── P14. DARK MODE: SURFACE PRECISION ──────────────────── */
+body.theme-dark .stat-chip {
+  background:   rgba(255,255,255,.04) !important;
+  border-color: rgba(255,255,255,.07) !important;
+}
+body.theme-dark .body-checkin {
+  background: linear-gradient(140deg,
+    color-mix(in srgb, var(--phase-card-accent) 16%, #1e1b2a),
+    #1a1724) !important;
+  border-color: color-mix(in srgb, var(--phase-border-accent) 36%,
+    rgba(255,255,255,.06)) !important;
+}
+body.theme-dark .focus-illustration {
+  background: linear-gradient(145deg,
+    color-mix(in srgb, var(--phase-secondary) 28%, #2a2240),
+    color-mix(in srgb, var(--phase-primary) 18%, #201d2c)) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06),
+    0 14px 32px color-mix(in srgb, var(--phase-primary) 18%, transparent) !important;
+}
+
+/* ── P15. RHYTHM TOOLS ACCORDION LABEL ──────────────────── */
+details.bloom-more-rhythm-tools > summary.bloom-more-rhythm-summary {
+  font-size:      12px !important;
+  letter-spacing: 0.02em !important;
+  opacity:        0.68 !important;
+  padding:        10px 0 !important;
+}
+
+/* ── P16. DASHBOARD SECTION RHYTHM ──────────────────────── */
+#screen-dashboard.active {
+  gap: var(--sp-4) !important;
+}
+@media (min-width: 768px) {
+  #screen-dashboard.active { gap: var(--sp-5) !important; }
+}
+@media (min-width: 1100px) {
+  #screen-dashboard.active { gap: var(--sp-6) !important; }
+  .app-shell { padding-top: var(--sp-6) !important; }
+}
+
+/* ── P17. DESKTOP: 2-COLUMN SUPPORTING CARDS ────────────── */
+@media (min-width: 860px) {
+  #screen-dashboard.active {
+    display:               grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    align-items:           start !important;
+    max-width:             1080px !important;
+  }
+  /* Hero: full width */
+  #screen-dashboard.active > #today-hero,
+  #screen-dashboard.active > .dashboard-home-hero {
+    grid-column: 1 / -1 !important;
+  }
+  /* Today's focus: full width */
+  #screen-dashboard.active > .todays-focus-premium {
+    grid-column: 1 / -1 !important;
+  }
+  /* Accordions and banners: full width */
+  #screen-dashboard.active > details,
+  #screen-dashboard.active > .quick-start-banner,
+  #screen-dashboard.active > [class*="phase-ahead"],
+  #screen-dashboard.active > [class*="phase-prep"] {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ── P18. INPUT FIELDS: PRECISE STYLING ─────────────────── */
+.field label {
+  font-size:      12px !important;
+  font-weight:    600 !important;
+  letter-spacing: 0.02em !important;
+  color:          var(--muted) !important;
+  margin-bottom:  var(--sp-1) !important;
+}
+input[type="text"],
+input[type="number"],
+textarea {
+  border-radius: var(--r-base) !important;
+  border:        1px solid rgba(200,195,220,.6) !important;
+  padding:       10px 14px !important;
+  font-size:     var(--fs-md) !important;
+  transition:    border-color .14s ease, box-shadow .14s ease !important;
+  min-height:    44px !important;
+}
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  border-color: var(--phase-primary) !important;
+  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 12%, transparent) !important;
+  outline:      none !important;
+}
+
+/* ── P19. TODAY'S FOCUS CARD: DARK MODE ─────────────────── */
+body.theme-dark .dashboard-card--featured.todays-focus-premium {
+  background:
+    radial-gradient(circle at 84% 14%,
+      color-mix(in srgb, var(--phase-secondary) 18%, transparent), transparent 36%),
+    linear-gradient(138deg,
+      color-mix(in srgb, var(--phase-card-accent) 28%, #1e1b2a),
+      #18161f) !important;
+  border-color: color-mix(in srgb, var(--phase-border-accent) 35%,
+    rgba(255,255,255,.06)) !important;
+}
+
+/* ── P20. TABLET: LEFT DOCK SIZING ──────────────────────── */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .left-dock {
+    width: 60px !important;
+  }
+}
+
+/* ── P21. MOTION: SUBTLE ENTRANCE ────────────────────────── */
+@keyframes bloom-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+#screen-dashboard.active > * {
+  animation: bloom-rise 340ms cubic-bezier(0.22,1,0.36,1) both;
+}
+#screen-dashboard.active > *:nth-child(1) { animation-delay: 0ms; }
+#screen-dashboard.active > *:nth-child(2) { animation-delay: 60ms; }
+#screen-dashboard.active > *:nth-child(3) { animation-delay: 110ms; }
+#screen-dashboard.active > *:nth-child(4) { animation-delay: 155ms; }
+#screen-dashboard.active > *:nth-child(5) { animation-delay: 195ms; }
+#screen-dashboard.active > *:nth-child(6) { animation-delay: 230ms; }
+#screen-dashboard.active > *:nth-child(n+7) { animation-delay: 260ms; }
+@media (prefers-reduced-motion: reduce) {
+  #screen-dashboard.active > * { animation: none !important; }
+}
+
+/* ── P22. FOCUS VISIBLE ──────────────────────────────────── */
+:focus-visible {
+  outline:        2px solid var(--phase-primary) !important;
+  outline-offset: 3px !important;
+}
+
+/* ── P23. PHASE STRIP BUTTONS (switcher in text col) ─────── */
+.phase-strip-btn {
+  font-size:     11px !important;
+  padding:       5px 11px !important;
+  border-radius: var(--r-full) !important;
+  font-weight:   600 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── P24. CARD INNER PADDING NORMALISATION ───────────────── */
+@media (max-width: 479px) {
+  .card { padding: 16px !important; }
+  .dashboard-home-hero { padding: 22px 18px 20px !important; }
+  .dashboard-card--featured.todays-focus-premium { padding: 22px 20px !important; }
+}
+@media (min-width: 480px) {
+  .card { padding: 20px !important; }
+}
+@media (min-width: 768px) {
+  .card { padding: 24px !important; }
+}
+
+/* ── P25. READINESS METER CARD ───────────────────────────── */
+.bloom-readiness-meter {
+  border-radius: var(--r-xl) !important;
+}
+input[type="range"] {
+  accent-color: var(--phase-primary) !important;
+  height:       4px !important;
+  cursor:       pointer !important;
+}
+
+/* ── P26. ONBOARDING DARK MODE: PRIVACY CHIP ────────────── */
+body.theme-dark .ob-privacy-note {
+  background:   color-mix(in srgb, var(--phase-card-accent) 20%, rgba(40,36,52,.9)) !important;
+  border-color: color-mix(in srgb, var(--phase-border-accent) 28%, rgba(255,255,255,.08)) !important;
+  color:        var(--muted) !important;
+}
+body.theme-dark .ob-privacy-note span {
+  color: var(--muted) !important;
+}
+/* Dark onboarding headings: warm pink accent */
+body.theme-dark .ob-step-content h2,
+body.theme-dark .ob-step-content .onboarding-heading {
+  color: #fecdd3 !important;
+}
+
+/* ── P27. PHASE STRIP BAR: DARK MODE ────────────────────── */
+body.theme-dark .hero-phase-strip__dot {
+  border-color: rgba(18,15,26,.9) !important;
+}
+
+/* ── P28. SETTINGS SCREEN SELECTS ───────────────────────── */
+#screen-settings select,
+#screen-profile select {
+  appearance:          none !important;
+  -webkit-appearance:  none !important;
+  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
+  background-repeat:   no-repeat !important;
+  background-position: right 14px center !important;
+  background-size:     9px 5px !important;
+  padding-right:       38px !important;
+  border-radius:       var(--r-base) !important;
+  border:              1px solid rgba(200,195,220,.65) !important;
+  font-size:           var(--fs-md) !important;
+  font-weight:         500 !important;
+  min-height:          44px !important;
+  cursor:              pointer !important;
+}
+body.theme-dark #screen-settings select,
+body.theme-dark #screen-profile select {
+  background-color:  rgba(24,20,34,.85) !important;
+  background-image:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
+  border-color:      rgba(255,255,255,.12) !important;
+  color:             var(--text) !important;
+}
+
+/* ── P29. HERO DATE SLOT: PRECISE TYPOGRAPHY ────────────── */
+.hero-date-slot {
+  font-size:      10px !important;
+  font-weight:    800 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color:          var(--phase-text-accent) !important;
+  margin-bottom:  var(--sp-2) !important;
+  opacity:        0.85 !important;
+}
+
+/* ── P30. SNAPSHOT STRIP: 3-COL EVEN ────────────────────── */
+.snapshot-strip {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap:                   var(--sp-3) !important;
+}
+@media (max-width: 359px) {
+  .snapshot-strip { gap: var(--sp-2) !important; }
+  .stat-chip { padding: 10px 8px !important; }
+}
+
+/* ── P31. PROGRESS SCREEN CARD HEADER ───────────────────── */
+.progress-card > h2,
+.progress-card > .section-title {
+  font-family:    var(--font-serif) !important;
+  font-style:     italic !important;
+  font-size:      clamp(18px, 4vw, 24px) !important;
+  letter-spacing: -0.02em !important;
+}
+
+</style>
+
+<style id="bloom-hidden-fix">
+/* Two-class selector (0,2,0) beats .onboarding-overlay (0,1,0) at same !important level */
+.onboarding-overlay.bloom-onb-closed { display: none !important; }
+/* Also hide the onboarding-open overflow lock when closed */
+/* html.bloom-onb-closed-html overflow:auto REMOVED — set on html kills scroll (scroll root at vh height) */
+body.bloom-onb-closed-body { overflow-x: hidden !important; }
+</style>
+
+<style id="bloom-os-premium-v1">
+  :root {
+    --bloom-porcelain: #fbf7f3;
+    --bloom-ivory: rgba(255, 252, 248, 0.88);
+    --bloom-ink: #21181f;
+    --bloom-muted: rgba(74, 59, 72, 0.68);
+    --bloom-champagne: #d8b16f;
+    --bloom-sage: #8dbb96;
+    --bloom-lavender: #a994ea;
+    --bloom-rose: #e58aa5;
+    --bloom-peach: #eca77d;
+    --bloom-border: rgba(104, 82, 103, 0.14);
+    --bloom-r-xl: 34px;
+    --bloom-r-lg: 26px;
+    --bloom-r-md: 18px;
+    --bloom-shadow-soft: 0 22px 70px rgba(67, 47, 69, 0.14), 0 2px 8px rgba(67, 47, 69, 0.06);
+    --bloom-shadow-deep: 0 34px 100px rgba(72, 48, 77, 0.20), 0 6px 18px rgba(72, 48, 77, 0.08);
+  }
+
+  html,
+  body {
+    background:
+      radial-gradient(circle at 14% 7%, rgba(229, 138, 165, 0.22), transparent 30%),
+      radial-gradient(circle at 86% 10%, rgba(169, 148, 234, 0.22), transparent 28%),
+      radial-gradient(circle at 70% 90%, rgba(141, 187, 150, 0.17), transparent 32%),
+      linear-gradient(135deg, #fbf7f3 0%, #f5edf5 48%, #fffdf8 100%) !important;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.30;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+    background-size: 58px 58px;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,0.46), transparent 74%);
+  }
+
+  .app-shell {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dashboard-home-hero,
+  .card,
+  .dashboard-card,
+  .rich-dashboard-section,
+  .body-checkin,
+  .snapshot-strip,
+  .stat-chip,
+  .mobile-bottom-nav,
+  .left-dock,
+  .app-header,
+  .quick-log-bar,
+  .bloom-os-card,
+  .bloom-os-insight {
+    border: 1px solid var(--bloom-border) !important;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,0.88), rgba(255,248,244,0.72)),
+      radial-gradient(circle at 18% 0%, rgba(216,177,111,0.15), transparent 36%),
+      radial-gradient(circle at 100% 100%, rgba(169,148,234,0.15), transparent 42%) !important;
+    box-shadow: var(--bloom-shadow-soft) !important;
+    backdrop-filter: blur(26px) saturate(1.2);
+    -webkit-backdrop-filter: blur(26px) saturate(1.2);
+  }
+
+  .dashboard-home-hero {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--bloom-r-xl) !important;
+    min-height: clamp(360px, 42vw, 510px);
+    box-shadow: var(--bloom-shadow-deep) !important;
+    isolation: isolate;
+  }
+
+  .dashboard-home-hero::before {
+    opacity: 0.95 !important;
+    background:
+      radial-gradient(circle at 16% 18%, rgba(229,138,165,0.34), transparent 28%),
+      radial-gradient(circle at 74% 20%, rgba(216,177,111,0.24), transparent 30%),
+      radial-gradient(circle at 88% 84%, rgba(141,187,150,0.23), transparent 30%) !important;
+  }
+
+  .dashboard-home-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -12% -45% 42%;
+    height: 72%;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(169,148,234,0.26), transparent 68%);
+    pointer-events: none;
+    animation: bloomOSAmbientDrift 11s ease-in-out infinite alternate;
+  }
+
+  .dashboard-home-hero__grid,
+  .dashboard-home-hero .hero-left,
+  .hero-ring-col {
+    position: relative;
+    z-index: 2;
+  }
+
+  .dashboard-home-hero__soul-line,
+  .dashboard-home-hero__greet,
+  .dashboard-home-hero__phase,
+  .section-title,
+  .bloom-os-title {
+    color: var(--bloom-ink) !important;
+    letter-spacing: 0 !important;
+    text-wrap: balance;
+  }
+
+  .dashboard-home-hero__meta,
+  .dashboard-home-hero__micro,
+  .dashboard-home-hero__phase-focus-line,
+  .bloom-os-copy,
+  .bloom-os-insight small,
+  .muted {
+    color: var(--bloom-muted) !important;
+  }
+
+  .dashboard-home-hero__primary,
+  .btn:not(.secondary):not(.yellow):not(.danger):not(.pink) {
+    min-height: 48px;
+    border: 0 !important;
+    color: #fffaf6 !important;
+    background:
+      linear-gradient(135deg, #21151c, #72516e 52%, #d8a46d) !important;
+    box-shadow: 0 18px 42px rgba(82, 48, 74, 0.26), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  }
+
+  .btn:hover,
+  .dock-btn:hover,
+  .mob-nav-btn:hover,
+  .energy-chip:hover,
+  .mood-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn:active,
+  .dock-btn:active,
+  .mob-nav-btn:active,
+  .energy-chip:active,
+  .mood-btn:active {
+    transform: translateY(1px) scale(0.99) !important;
+  }
+
+  .bloom-os-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(220px, 0.85fr) minmax(170px, 0.55fr) minmax(170px, 0.55fr);
+    gap: clamp(12px, 1.6vw, 18px);
+    margin: clamp(-110px, -7vw, -72px) 0 0;
+    position: relative;
+    z-index: 5;
+  }
+
+  .bloom-os-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 178px;
+    padding: clamp(18px, 2vw, 24px);
+    border-radius: var(--bloom-r-lg) !important;
+    isolation: isolate;
+  }
+
+  .bloom-os-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(255,255,255,0.72), transparent 34%),
+      radial-gradient(circle at 90% 100%, rgba(216,177,111,0.16), transparent 38%);
+    pointer-events: none;
+  }
+
+  .bloom-os-score-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(16px, 2.4vw, 30px);
+  }
+
+  .bloom-os-trend-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .bloom-os-mini-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .bloom-os-kicker {
+    display: block;
+    margin: 0 0 8px;
+    color: rgba(86, 64, 84, 0.62);
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .bloom-os-title {
+    margin: 0 0 10px;
+    font-size: clamp(24px, 3vw, 42px);
+    line-height: 0.98;
+    max-width: 10ch;
+  }
+
+  .bloom-os-copy {
+    margin: 0;
+    max-width: 44ch;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+
+  .bloom-os-ring {
+    --p: 0;
+    width: clamp(118px, 12vw, 158px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--bloom-ink);
+    background:
+      radial-gradient(circle at center, rgba(255,255,255,0.94) 0 48%, transparent 49%),
+      conic-gradient(from -70deg, var(--bloom-lavender) calc(var(--p) * 1%), rgba(232,224,232,0.78) 0);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.9), 0 18px 48px rgba(84, 60, 92, 0.16);
+  }
+
+  .bloom-os-ring span {
+    display: block;
+    font-size: clamp(34px, 4vw, 54px);
+    font-weight: 900;
+    line-height: 0.9;
+  }
+
+  .bloom-os-ring small {
+    position: absolute;
+    margin-top: 52px;
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(82,61,82,0.54);
+  }
+
+  .bloom-os-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .bloom-os-delta {
+    padding: 7px 10px;
+    border-radius: 999px;
+    color: #4d3d50;
+    background: rgba(141,187,150,0.16);
+    border: 1px solid rgba(141,187,150,0.26);
+    font-size: 11px;
+    font-weight: 850;
+    white-space: nowrap;
+  }
+
+  .bloom-os-sparkline {
+    width: 100%;
+    height: 76px;
+    overflow: visible;
+  }
+
+  .bloom-os-spark-area {
+    fill: rgba(169,148,234,0.13);
+  }
+
+  .bloom-os-spark-path {
+    fill: none;
+    stroke: var(--bloom-lavender);
+    stroke-width: 5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 10px 14px rgba(169,148,234,0.28));
+  }
+
+  .bloom-os-mini-card strong {
+    display: block;
+    color: var(--bloom-ink);
+    font-size: clamp(26px, 3.2vw, 40px);
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .bloom-os-mini-card p {
+    margin: 12px 0 0;
+    color: var(--bloom-muted);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .bloom-os-insight-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(12px, 1.6vw, 18px);
+    margin: 0;
+  }
+
+  .bloom-os-insight {
+    min-height: 112px;
+    padding: 18px;
+    border-radius: var(--bloom-r-md) !important;
+  }
+
+  .bloom-os-insight span {
+    display: block;
+    margin-bottom: 8px;
+    color: rgba(86,64,84,0.58);
+    font-size: 10px;
+    font-weight: 850;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .bloom-os-insight strong {
+    display: block;
+    color: var(--bloom-ink);
+    font-size: clamp(18px, 2vw, 25px);
+    line-height: 1.05;
+  }
+
+  .bloom-os-insight small {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .bloom-os-private {
+    background:
+      linear-gradient(145deg, rgba(31,22,30,0.94), rgba(80,55,78,0.84)),
+      radial-gradient(circle at 90% 0%, rgba(216,177,111,0.28), transparent 40%) !important;
+  }
+
+  .bloom-os-private span,
+  .bloom-os-private small {
+    color: rgba(255,250,245,0.72) !important;
+  }
+
+  .bloom-os-private strong {
+    color: #fffaf5 !important;
+  }
+
+  .stat-chip,
+  .tag,
+  .pill,
+  .chip,
+  .energy-chip,
+  .mood-btn,
+  .btn.secondary,
+  .saved-local-chip,
+  .hero-date-pill {
+    border: 1px solid rgba(104,82,103,0.13) !important;
+    background: rgba(255,255,255,0.54) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.78), 0 10px 30px rgba(71,47,72,0.08) !important;
+  }
+
+  @keyframes bloomOSAmbientDrift {
+    from { transform: translate3d(-2%, 1%, 0) scale(0.96); opacity: 0.58; }
+    to { transform: translate3d(3%, -2%, 0) scale(1.04); opacity: 0.88; }
+  }
+
+  @media (max-width: 1180px) {
+    .bloom-os-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  @media (max-width: 760px) {
+    .dashboard-home-hero {
+      min-height: auto;
+      border-radius: 28px !important;
+    }
+
+    .dashboard-home-hero .hero-ring-col {
+      display: none !important;
+    }
+
+    .dashboard-home-hero__grid {
+      gap: 10px !important;
+    }
+
+    .bloom-os-grid {
+      grid-template-columns: 1fr;
+      margin-top: -34px;
+    }
+
+    .bloom-os-insight-strip {
+      grid-template-columns: 1fr;
+    }
+
+    .bloom-os-score-card {
+      grid-template-columns: 1fr;
+    }
+
+    .bloom-os-ring {
+      justify-self: start;
+      width: 132px;
+    }
+
+    .bloom-os-card,
+    .bloom-os-insight {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.97), rgba(255,249,245,0.92)),
+        radial-gradient(circle at 20% 0%, rgba(216,177,111,0.12), transparent 36%),
+        radial-gradient(circle at 100% 100%, rgba(169,148,234,0.11), transparent 40%) !important;
+    }
+  }
+
+  @media (max-width: 380px) {
+    .bloom-os-card,
+    .bloom-os-insight {
+      padding: 16px;
+      border-radius: 22px !important;
+    }
+
+    .bloom-os-title {
+      font-size: 27px;
+    }
+  }
+
+  body.theme-dark,
+  body.dark,
+  html.dark body {
+    background:
+      radial-gradient(circle at 18% 8%, rgba(173,91,126,0.30), transparent 30%),
+      radial-gradient(circle at 86% 14%, rgba(151,129,210,0.22), transparent 28%),
+      radial-gradient(circle at 65% 92%, rgba(102,145,111,0.18), transparent 35%),
+      linear-gradient(135deg, #110d12 0%, #1f1720 48%, #0d0b0f 100%) !important;
+  }
+
+  body.theme-dark .dashboard-home-hero,
+  body.theme-dark .card,
+  body.theme-dark .dashboard-card,
+  body.theme-dark .rich-dashboard-section,
+  body.theme-dark .body-checkin,
+  body.theme-dark .snapshot-strip,
+  body.theme-dark .stat-chip,
+  body.theme-dark .mobile-bottom-nav,
+  body.theme-dark .left-dock,
+  body.theme-dark .app-header,
+  body.theme-dark .quick-log-bar,
+  body.theme-dark .bloom-os-card,
+  body.theme-dark .bloom-os-insight,
+  body.dark .dashboard-home-hero,
+  body.dark .card,
+  body.dark .dashboard-card,
+  body.dark .rich-dashboard-section,
+  body.dark .body-checkin,
+  body.dark .snapshot-strip,
+  body.dark .stat-chip,
+  body.dark .mobile-bottom-nav,
+  body.dark .left-dock,
+  body.dark .app-header,
+  body.dark .quick-log-bar,
+  body.dark .bloom-os-card,
+  body.dark .bloom-os-insight,
+  html.dark body .dashboard-home-hero,
+  html.dark body .card,
+  html.dark body .dashboard-card,
+  html.dark body .rich-dashboard-section,
+  html.dark body .body-checkin,
+  html.dark body .snapshot-strip,
+  html.dark body .stat-chip,
+  html.dark body .mobile-bottom-nav,
+  html.dark body .left-dock,
+  html.dark body .app-header,
+  html.dark body .quick-log-bar,
+  html.dark body .bloom-os-card,
+  html.dark body .bloom-os-insight {
+    border-color: rgba(255,244,236,0.12) !important;
+    background:
+      linear-gradient(145deg, rgba(42,34,42,0.88), rgba(24,20,25,0.72)),
+      radial-gradient(circle at 16% 0%, rgba(216,177,111,0.12), transparent 34%),
+      radial-gradient(circle at 100% 100%, rgba(169,148,234,0.13), transparent 42%) !important;
+    box-shadow: 0 28px 88px rgba(0,0,0,0.36), 0 1px 0 rgba(255,255,255,0.04) inset !important;
+  }
+
+  body.theme-dark .bloom-os-title,
+  body.theme-dark .bloom-os-mini-card strong,
+  body.theme-dark .bloom-os-insight strong,
+  body.theme-dark .dashboard-home-hero__soul-line,
+  body.theme-dark .dashboard-home-hero__greet,
+  body.dark .bloom-os-title,
+  body.dark .bloom-os-mini-card strong,
+  body.dark .bloom-os-insight strong,
+  body.dark .dashboard-home-hero__soul-line,
+  body.dark .dashboard-home-hero__greet,
+  html.dark body .bloom-os-title,
+  html.dark body .bloom-os-mini-card strong,
+  html.dark body .bloom-os-insight strong,
+  html.dark body .dashboard-home-hero__soul-line,
+  html.dark body .dashboard-home-hero__greet {
+    color: #fff8ef !important;
+  }
+
+  body.theme-dark .bloom-os-kicker,
+  body.theme-dark .bloom-os-copy,
+  body.theme-dark .bloom-os-insight small,
+  body.dark .bloom-os-kicker,
+  body.dark .bloom-os-copy,
+  body.dark .bloom-os-insight small,
+  html.dark body .bloom-os-kicker,
+  html.dark body .bloom-os-copy,
+  html.dark body .bloom-os-insight small {
+    color: rgba(255,248,239,0.68) !important;
+  }
+
+  body.theme-dark .bloom-os-ring,
+  body.dark .bloom-os-ring,
+  html.dark body .bloom-os-ring {
+    color: #fff8ef;
+    background:
+      radial-gradient(circle at center, rgba(33,27,33,0.96) 0 48%, transparent 49%),
+      conic-gradient(from -70deg, #c7b8ff calc(var(--p) * 1%), rgba(255,244,232,0.13) 0);
+  }
+
+  body.theme-dark .bloom-os-delta,
+  body.dark .bloom-os-delta,
+  html.dark body .bloom-os-delta,
+  body.theme-dark .stat-chip,
+  body.dark .stat-chip,
+  html.dark body .stat-chip,
+  body.theme-dark .tag,
+  body.dark .tag,
+  html.dark body .tag,
+  body.theme-dark .pill,
+  body.dark .pill,
+  html.dark body .pill,
+  body.theme-dark .chip,
+  body.dark .chip,
+  html.dark body .chip,
+  body.theme-dark .btn.secondary,
+  body.dark .btn.secondary,
+  html.dark body .btn.secondary {
+    color: rgba(255,248,239,0.82) !important;
+    border-color: rgba(255,244,232,0.12) !important;
+    background: rgba(255,255,255,0.06) !important;
+  }
+
+  @media (max-width: 760px) {
+    body.theme-dark .bloom-os-card,
+    body.theme-dark .bloom-os-insight,
+    body.dark .bloom-os-card,
+    body.dark .bloom-os-insight,
+    html.dark body .bloom-os-card,
+    html.dark body .bloom-os-insight {
+      background:
+        linear-gradient(145deg, rgba(42,34,42,0.96), rgba(24,20,25,0.90)),
+        radial-gradient(circle at 20% 0%, rgba(216,177,111,0.13), transparent 36%),
+        radial-gradient(circle at 100% 100%, rgba(169,148,234,0.14), transparent 40%) !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dashboard-home-hero::after,
+    .bloom-os-card,
+    .dashboard-home-hero,
+    .card,
+    .btn,
+    .dock-btn,
+    .mob-nav-btn {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+
+<style id="bloom-qa-fixes-2026">
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   C1 — iOS INPUT ZOOM PREVENTION
+   All inputs must be ≥16px on mobile to prevent Safari
+   from triggering automatic viewport zoom on focus.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="time"],
+  input[type="search"],
+  input[type="password"],
+  input[type="url"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   C2 — DARK MODE: body::before GRID TEXTURE SUPPRESSION
+   bloom-os-premium-v1 adds a fixed white-line grid overlay
+   (opacity 0.30) with no dark mode override. In dark mode
+   this renders white grid lines on a dark background.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+body.theme-dark::before,
+body.dark::before,
+html.dark body::before {
+  opacity: 0 !important;
+  display: none !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   H1 — SNAPSHOT-STRIP: OVERFLOW FIX AT 320–340px
+   minmax(112px,1fr) × 3 cols = 336px min at 320px viewport
+   (content width ~296px after padding → 40px overflow).
+   At ≤340px drop to 2 columns so cards never overflow.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 340px) {
+  .snapshot-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    overflow-x: hidden !important;
+  }
+  .snapshot-strip .stat-chip {
+    min-width: 0 !important;
+  }
+}
+
+/* On all mobile: tighten the per-chip minimum so 3 cols
+   always fit within the viewport without horizontal bleed */
+@media (max-width: 480px) {
+  .snapshot-strip {
+    grid-template-columns: repeat(3, minmax(88px, 1fr)) !important;
+  }
+  .snapshot-strip .stat-chip {
+    min-width: 0 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   H2 — QUICK-LOG BAR: max-width clamp on narrow phones
+   Prevents the bar from visually overflowing at 320px.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 520px) {
+  .quick-log-bar {
+    max-width: calc(100vw - 24px) !important;
+    padding: 6px 10px !important;
+    gap: 8px !important;
+  }
+  .quick-log-bar .quick-log-session {
+    font-size: 11px !important;
+    padding: 6px 10px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   H3 — MOBILE: REDUCE BACKDROP-FILTER FOR PERFORMANCE
+   Applying blur(26px) to every .card/.stat-chip/.nav etc.
+   causes scroll jank on mid-range Android. On mobile
+   reduce to blur(12px) which is imperceptible to users but
+   cuts GPU composite cost by ~60%.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 767px) {
+  .card,
+  .dashboard-card,
+  .rich-dashboard-section,
+  .stat-chip,
+  .energy-day-card {
+    backdrop-filter: blur(12px) saturate(1.1) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(1.1) !important;
+  }
+  /* Nav and header keep stronger blur for frosted-glass feel */
+  .mobile-bottom-nav,
+  .app-header,
+  .quick-log-bar {
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   H4 — DASHBOARD HERO: min-height guard at very small phones
+   Ensure the hero never forces a taller-than-viewport box
+   on sub-375px screens (360px / 320px).
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 374px) {
+  .dashboard-home-hero {
+    min-height: 0 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   M1 — SECTION TITLE h2 OVERRIDE: SCOPE TO ACTUAL TITLES
+   The global `h2 { font-size: clamp(20px,3vw,32px) }` rule
+   makes all card-internal h2 elements 20px on mobile, even
+   small sub-headings. Narrow it to only structural h2s.
+   Card-internal h2 elements are left to inherit naturally.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 767px) {
+  .card h2:not(.section-title):not(.dashboard-card__headline):not(.dashboard-home-hero__greet) {
+    font-size: clamp(16px, 4vw, 20px) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   M2 — APP-SHELL PADDING-BOTTOM: consolidated safe values
+   Resolves the 5-way conflict between competing rules.
+   Ensures content always clears the bottom nav + quick-log
+   bar + safe area, with no double-counting.
+   Mobile (<768px): bottom nav (≈66px) + quick-log (≈46px)
+                    + safe area + comfortable breathing room.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 767px) {
+  .app-shell {
+    padding-bottom: max(128px, calc(120px + env(safe-area-inset-bottom, 0px))) !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .app-shell {
+    padding-bottom: max(130px, calc(122px + env(safe-area-inset-bottom, 0px))) !important;
+    padding-left: max(14px, env(safe-area-inset-left, 14px)) !important;
+    padding-right: max(14px, env(safe-area-inset-right, 14px)) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   M4 — CHIP-ROW: WRAP INSTEAD OF HORIZONTAL SCROLL ≤380px
+   The earlier rule forces nowrap + overflow-x:auto which
+   is functional but looks cheap (unexpected scroll strip).
+   Allow wrapping — the header tolerates 2 lines better
+   than a horizontal scroll row.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 380px) {
+  .chip-row {
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
+    gap: 6px !important;
+  }
+  .chip {
+    font-size: 11px !important;
+    padding: 6px 10px !important;
+    flex-shrink: 1 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   P4 — INSTALL HINT: clear above quick-log bar on mobile
+   bloom-install-hint was bottom: calc(76px + safe-area + 8px)
+   but quick-log bar sits at bottom: calc(72px + safe-area).
+   The bar is ~46px tall so the hint needs to clear 72+46+8.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 980px) {
+  .bloom-install-hint {
+    bottom: calc(130px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+@media (min-width: 900px) {
+  .bloom-install-hint {
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BONUS: Ensure no horizontal overflow escapes at root
+   IMPORTANT: only set overflow-x on body, NOT html.
+   Setting overflow-x:hidden on html makes html the scroll
+   container at viewport height → kills vertical page scroll
+   in Chrome. Body handles the clip; html stays scroll-able.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+/* SCROLL RESTORE: html must have overflow:visible on BOTH axes.
+   CSS spec interaction rule: if one axis is visible + other is non-visible,
+   visible gets promoted to auto — making html the scroll container at viewport
+   height, which kills vertical scroll. Both visible = html never clips anything.
+   Body alone handles horizontal overflow clip.
+
+   SPECIFICITY NOTE: JS adds .bloom-onb-closed-html to <html> when onboarding
+   closes. The rule html.bloom-onb-closed-html {overflow:auto} in bloom-hidden-fix
+   has specificity (0,1,1) which beats html (0,0,1) even with !important.
+   We therefore enumerate all known class variants here so this block always wins. */
+html,
+html.bloom-onb-closed-html,
+html:not(.onboarding-open) {
+  overflow: visible !important;
+}
+body {
+  max-width: 100vw !important;
+  overflow-x: hidden !important;
+}
+
+/* Prevent any fixed-width intermediate ancestor from
+   causing horizontal bleed on 320px screens */
+@media (max-width: 374px) {
+  .stat-chips-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+  .stat-chip--low-energy {
+    display: none !important;
+  }
+  .todays-focus-premium {
+    grid-template-columns: 1fr !important;
+    padding: 20px 16px !important;
+  }
+  .focus-illustration {
+    width: 56px !important;
+    height: 56px !important;
+    font-size: 26px !important;
+  }
+  /* Tighten hero text at 320px */
+  .dashboard-home-hero__greet {
+    font-size: clamp(22px, 7vw, 28px) !important;
+    margin-bottom: 8px !important;
+  }
+  .dashboard-home-hero__meta {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+  }
+  .dashboard-home-hero__micro {
+    font-size: 13px !important;
+    margin-bottom: 14px !important;
+  }
+  .dashboard-home-hero__primary {
+    min-height: 46px !important;
+    font-size: 14px !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DARK MODE: Frosted-glass cards use correct dark glass —
+   not white-tinted frosted glass. Repair any surfaces
+   where backdrop-filter + white background creates a
+   white-washed card in dark mode.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+body.theme-dark .stat-chip,
+body.dark .stat-chip,
+html.dark body .stat-chip {
+  background:
+    linear-gradient(145deg, rgba(42,34,42,0.82), rgba(24,20,25,0.70)) !important;
+  border-color: rgba(255,244,236,0.10) !important;
+}
+
+body.theme-dark .energy-chip,
+body.dark .energy-chip,
+html.dark body .energy-chip,
+body.theme-dark .mood-btn,
+body.dark .mood-btn,
+html.dark body .mood-btn {
+  background: rgba(255,255,255,0.07) !important;
+  border-color: rgba(255,244,232,0.12) !important;
+  color: var(--text) !important;
+}
+
+body.theme-dark .energy-chip.selected,
+body.dark .energy-chip.selected,
+html.dark body .energy-chip.selected,
+body.theme-dark .mood-btn.selected,
+body.dark .mood-btn.selected,
+html.dark body .mood-btn.selected {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--phase-primary) 68%, #241c22),
+    color-mix(in srgb, var(--phase-secondary) 54%, #241c22)) !important;
+  color: #fff !important;
+  border-color: transparent !important;
+}
+
+/* The light-mode rule in bloom-os-premium-v1 sets
+   background: rgba(255,255,255,0.54) on .btn.secondary
+   — override for dark mode to avoid white buttons. */
+body.theme-dark .btn.secondary,
+body.dark .btn.secondary,
+html.dark body .btn.secondary {
+  background: rgba(255,255,255,0.08) !important;
+  color: var(--text) !important;
+  border-color: rgba(255,244,232,0.15) !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   TOAST: ensure it never sits under the bottom nav
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 767px) {
+  .toast {
+    bottom: max(130px, calc(122px + env(safe-area-inset-bottom, 0px))) !important;
+    right: max(14px, env(safe-area-inset-right, 14px)) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   DESKTOP POLISH: left-dock clearance at tablet range only.
+   At 768–1199px the app-shell is full-width (no auto-margin)
+   so we need explicit padding-left to clear the 76px dock.
+   At ≥1200px the shell is max-width:1160px + margin:0 auto,
+   so the centering already provides natural dock separation —
+   no extra padding-left needed (the base 16px is fine there).
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .app-shell {
+    padding-left: max(92px, calc(76px + 16px)) !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D1 — DASHBOARD: BLOOM-OS SECTIONS MUST SPAN FULL WIDTH
+   bloom-os-premium-v1 (≥860px) places #screen-dashboard in a
+   2-column grid. bloom-os-grid and bloom-os-insight-strip are
+   direct children that fall into col-1 and col-2 respectively
+   — they float SIDE BY SIDE instead of stacking.
+   Fix: force both to span grid-column: 1 / -1 (full width).
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (min-width: 860px) {
+  #screen-dashboard.active > .bloom-os-grid,
+  #screen-dashboard.active > .bloom-os-insight-strip {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D2 — BLOOM-OS-GRID: REMOVE NEGATIVE MARGIN (GHOST FIX)
+   bloom-os-premium-v1 sets margin: clamp(-110px,-7vw,-72px)
+   on .bloom-os-grid — pulling the section UP into the hero,
+   creating dark ghost blocks overlapping the hero card corner.
+   Remove it. The dashboard gap handles vertical spacing.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bloom-os-grid {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D3 — BLOOM-OS-GRID: CLEAN 3-COLUMN INTERNAL LAYOUT
+   Original: 4 columns (1.45fr / 0.85fr / 0.55fr / 0.55fr)
+   → mini-cards end up ~170px wide with 40px font = overflow.
+   Fix: 3-column layout where score-card spans all columns.
+     Row 1: score-card   (full-width — donut ring + text)
+     Row 2: trend-card | readiness-mini | next-best-mini
+   At tablet/mobile the existing responsive rules handle it.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (min-width: 761px) {
+  .bloom-os-grid {
+    grid-template-columns: 1fr 1fr 1fr !important;
+    align-items: start !important;
+  }
+  .bloom-os-score-card {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D4 — BLOOM-OS-MINI-CARD: FIX OVERFLOWING FONT SIZE
+   Original: clamp(26px, 3.2vw, 40px) — at 1440px = 40px.
+   "Technique-focused Pilates" at 40px overflows any card.
+   Fix: reduce to sensible display size that fits the card.
+   Also add word-break so long strings never escape the box.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bloom-os-mini-card strong {
+  font-size: clamp(16px, 1.6vw, 22px) !important;
+  line-height: 1.25 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D5 — BLOOM-OS CARDS: REMOVE STRETCH-TO-FILL HEIGHT
+   Default grid alignment is stretch, making cards grow to
+   fill their row's height. This creates "tall mostly empty"
+   cards (7-day rhythm, mini-cards). align-self: start lets
+   each card be exactly as tall as its content needs.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.bloom-os-trend-card,
+.bloom-os-mini-card {
+  align-self: start !important;
+}
+.bloom-os-card {
+  min-height: 0 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D6 — BLOOM-OS-INSIGHT-STRIP: RESPONSIVE COLUMN COLLAPSE
+   3-column strip collapses to 1-col at ≤760px (handled by
+   bloom-os-premium-v1). Add mid-range 2-column fallback to
+   prevent squashed cards on 600–900px viewports.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (max-width: 599px) {
+  .bloom-os-insight-strip {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (min-width: 600px) and (max-width: 860px) {
+  .bloom-os-insight-strip {
+    grid-template-columns: 1fr 1fr !important;
+  }
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D7 — LEFT DOCK: COLLAPSE TOGGLE BUTTON POLISH
+   The ☰ toggle button is only meaningful when showing text
+   labels (open state). In the icon-only 58px state it adds
+   clutter and looks "off" as a floating hamburger above the
+   icon buttons. Keep it functional but visually subdued.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+#dockToggle {
+  width:            36px !important;
+  height:           28px !important;
+  padding:          4px 6px !important;
+  font-size:        11px !important;
+  border-radius:    10px !important;
+  background:       rgba(255,255,255,0.45) !important;
+  border-color:     rgba(167,139,250,0.12) !important;
+  color:            rgba(95,78,161,0.55) !important;
+  align-self:       center !important;
+  justify-self:     center !important;
+  margin-bottom:    2px !important;
+}
+#dockToggle:hover {
+  background:       rgba(255,255,255,0.75) !important;
+  color:            rgba(95,78,161,0.9) !important;
+}
+body.theme-dark #dockToggle,
+body.dark #dockToggle {
+  background:       rgba(255,255,255,0.07) !important;
+  border-color:     rgba(255,244,232,0.1) !important;
+  color:            rgba(200,190,220,0.45) !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D8 — APP-HEADER: REMOVE BOTTOM-RADIUS GHOST
+   The 24px border-radius on .app-header creates a dark
+   glass "floating block" shape at the top of the hero in
+   dark mode — the header's bottom rounded corners appear as
+   a ghost dark element against the hero's own dark background.
+   Remove the bottom radius so the header sits flush.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+.app-header {
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+/* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   D9 — DESKTOP DOCK CLEARANCE: ENSURE CONTENT NOT CLIPPED
+   At ≥1200px the app-shell is max-width:1320px + margin auto.
+   The dock is fixed at left:12px, width:58px (right edge=70px).
+   At 1440px the shell left-edge is (1440-1320)/2=60px — 10px
+   overlap. At 1200px the shell fills full width (no auto margin
+   kicks in), so the dock overlaps the content by 58px.
+   Apply padding-left at ≥1200px to guarantee clearance.
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+@media (min-width: 1200px) {
+  .app-shell {
+    padding-left: max(88px, calc(70px + 18px)) !important;
+  }
+}
+
 </style>
 
 </head>
@@ -6027,6 +8941,32 @@ body.theme-dark .mobile-bottom-nav {
         : "Build clean control, breath-led strength, and confident alignment without rushing the session.";
       if(typeof state.readinessMeter !== "number") state.readinessMeter = 52;
       const readinessHintInitial = computeReadinessHint(phaseDay, state.readinessMeter, getTodayBodyTone());
+      const bloomOSHasSignal = m.completed > 0 || streak > 0 || state.todayMoveDone || Object.keys(state.logs || {}).length > 0;
+      const bloomOSScoreRaw = Math.round((alignPack.overall * 0.42) + (m.completionPct * 0.32) + (Math.min(streak, 7) / 7 * 16) + (state.todayMoveDone ? 10 : 0));
+      const bloomOSScore = Math.max(bloomOSHasSignal ? 0 : 42, Math.min(100, bloomOSScoreRaw));
+      const bloomOSReadiness = Math.max(0, Math.min(100, Math.round((Number(state.readinessMeter) || 52) * 0.58 + phasePct * 0.24 + (state.selectedEnergy === "high" ? 14 : state.selectedEnergy === "moderate" ? 9 : state.selectedEnergy === "low" ? 4 : 1))));
+      const bloomOSDays = getLast7Dates();
+      const bloomOSSeries = bloomOSDays.map((d) => {
+        const row = state.logs[d] || {};
+        const done = row.completed === "Y" || row.completed === true || row.completed === "yes";
+        const energyBoost = row.energy === "high" ? 18 : row.energy === "moderate" ? 12 : row.energy === "low" ? 7 : row.energy === "very_low" ? 4 : 8;
+        return done ? Math.min(100, 48 + energyBoost + (row.mode === "low_energy" ? 8 : 18)) : Math.max(10, energyBoost + 8);
+      });
+      const bloomOSPoints = bloomOSSeries.map((value, index) => {
+        const x = Math.round((index / Math.max(1, bloomOSSeries.length - 1)) * 220);
+        const y = Math.round(68 - (Math.max(0, Math.min(100, value)) / 100) * 58);
+        return [x, y];
+      });
+      const bloomOSPath = bloomOSPoints.map((p, i) => `${i ? "L" : "M"}${p[0]} ${p[1]}`).join(" ");
+      const bloomOSArea = `${bloomOSPath} L220 76 L0 76 Z`;
+      const bloomOSNextBest = (state.selectedEnergy === "very_low" || state.selectedEnergy === "low")
+        ? ["Soft Flow minimum", "Five quiet minutes still protects the identity you are building."]
+        : ["Technique-focused Pilates", "Clean control will give today more value than intensity for intensity's sake."];
+      const bloomOSCompanion = lowDays >= 3
+        ? "Your week is asking for softness. Choose smaller promises and keep the rhythm alive."
+        : state.todayMoveDone
+        ? "Today already has proof. Let the next choice be recovery, not more pressure."
+        : "Start with one controlled session. Momentum likes a gentle doorway.";
       const weeklyAlignmentCard = `
             <section class="card dashboard-card dashboard-card--alignment">
               <p class="dashboard-card__eyebrow">Weekly alignment</p>
@@ -6071,6 +9011,62 @@ body.theme-dark .mobile-bottom-nav {
             </div>
           </div>
         </div>
+
+        <section class="bloom-os-grid" aria-label="Bloom OS intelligence">
+          <article class="bloom-os-card bloom-os-score-card" aria-live="polite">
+            <div>
+              <p class="bloom-os-kicker">Bloom OS</p>
+              <h2 class="bloom-os-title">Today&rsquo;s body intelligence</h2>
+              <p class="bloom-os-copy">${esc(!bloomOSHasSignal ? "A beautiful guided baseline is ready. Your first tiny session will turn the preview into private proof." : bloomOSScore >= 70 ? "Your rhythm has strong evidence today. Let precision, not pressure, lead the session." : bloomOSScore >= 38 ? "Enough signal to choose well. One gentle session can turn today into proof." : "A soft beginning is still data. Bloom will shape the day around what you can actually do.")}</p>
+            </div>
+            <div class="bloom-os-ring" style="--p:${bloomOSScore};">
+              <span>${bloomOSScore}</span>
+              <small>signal</small>
+            </div>
+          </article>
+
+          <article class="bloom-os-card bloom-os-trend-card">
+            <div class="bloom-os-card-head">
+              <span class="bloom-os-kicker">7 day rhythm</span>
+              <span class="bloom-os-delta">${m.completed} of 7 moved</span>
+            </div>
+            <svg class="bloom-os-sparkline" viewBox="0 0 220 76" preserveAspectRatio="none" aria-hidden="true">
+              <path class="bloom-os-spark-area" d="${bloomOSArea}"></path>
+              <path class="bloom-os-spark-path" d="${bloomOSPath}"></path>
+            </svg>
+            <p class="bloom-os-copy">${esc(`${alignPack.overall}% cycle alignment · ${streak} day${streak === 1 ? "" : "s"} of returning to yourself.`)}</p>
+          </article>
+
+          <article class="bloom-os-card bloom-os-mini-card">
+            <span class="bloom-os-kicker">Readiness field</span>
+            <strong>${bloomOSReadiness}%</strong>
+            <p>${esc(energyLabel[state.selectedEnergy])} energy · ${esc(phaseLabel[state.selectedPhase])} phase tuned.</p>
+          </article>
+
+          <article class="bloom-os-card bloom-os-mini-card">
+            <span class="bloom-os-kicker">Next best move</span>
+            <strong>${esc(bloomOSNextBest[0])}</strong>
+            <p>${esc(bloomOSNextBest[1])}</p>
+          </article>
+        </section>
+
+        <section class="bloom-os-insight-strip" aria-label="Gentle intelligence">
+          <div class="bloom-os-insight">
+            <span>Companion note</span>
+            <strong>${esc(lowDays >= 3 ? "Softer week" : state.todayMoveDone ? "Proof gathered" : "Begin lightly")}</strong>
+            <small>${esc(bloomOSCompanion)}</small>
+          </div>
+          <div class="bloom-os-insight">
+            <span>Cycle cue</span>
+            <strong>Day ${todayMeta.cycleDay || 1}</strong>
+            <small>${esc(phaseDirectionLine)}</small>
+          </div>
+          <div class="bloom-os-insight bloom-os-private">
+            <span>Privacy layer</span>
+            <strong>No cloud. No account.</strong>
+            <small>Your phase, workouts, notes and progress stay on this device.</small>
+          </div>
+        </section>
 
         <section class="card dashboard-card dashboard-card--featured todays-focus-premium">
           <div>
@@ -9214,1849 +12210,11 @@ body.theme-dark .mobile-bottom-nav {
 })();
 </script>
 
-<style id="bloom-system-v3">
-/* ── Phase 4+5: Bloom premium depth & hierarchy ── */
+<!-- bloom-system-v3 moved to <head> for correct CSS cascade -->
 
-/* Hero card: tighter vertical rhythm on mobile so CTA is above fold */
-@media (max-width: 430px) {
-  .phase-hero-card { padding: 14px 16px !important; gap: 14px !important; }
-  .phase-hero-name { font-size: clamp(19px, 5vw, 24px) !important; margin-bottom: 2px !important; }
-  .phase-hero-day  { margin-bottom: 8px !important; }
-  .phase-hero-desc { font-size: 12.5px !important; margin-top: 6px !important; }
-}
+<!-- bloom-foundation-v1 moved to <head> for correct CSS cascade -->
 
-/* Phase-aware ambient canvas — desktop only, subtle */
-@media (min-width: 900px) {
-  body:not(.theme-dark) {
-    background: radial-gradient(
-      ellipse 70% 50% at 70% 0%,
-      color-mix(in srgb, var(--phase-primary) 8%, transparent),
-      transparent 60%
-    ), var(--bg) !important;
-  }
-  body.theme-dark {
-    background: radial-gradient(
-      ellipse 70% 50% at 70% 0%,
-      color-mix(in srgb, var(--phase-primary) 5%, transparent),
-      transparent 55%
-    ), var(--bg) !important;
-  }
-}
-
-/* Phase ring: glow ring behind the arc on hover */
-.phase-arc-wrap {
-  filter: drop-shadow(0 6px 18px color-mix(in srgb, var(--phase-primary) 22%, transparent));
-  transition: filter 300ms ease;
-}
-
-/* Primary CTA: stronger depth + press state */
-.btn:not(.secondary):not(.yellow):not(.danger):not(.pink) {
-  box-shadow:
-    0 6px 20px color-mix(in srgb, var(--phase-primary) 28%, transparent),
-    inset 0 1px 0 rgba(255,255,255,0.22) !important;
-  transition: transform 140ms cubic-bezier(0.22,1,0.36,1), box-shadow 160ms ease !important;
-}
-.btn:not(.secondary):not(.yellow):not(.danger):not(.pink):active {
-  transform: scale(0.97) !important;
-  box-shadow: 0 2px 8px color-mix(in srgb, var(--phase-primary) 20%, transparent) !important;
-}
-@media (hover: hover) {
-  .btn:not(.secondary):not(.yellow):not(.danger):not(.pink):hover {
-    transform: translateY(-1px) !important;
-    box-shadow:
-      0 10px 28px color-mix(in srgb, var(--phase-primary) 34%, transparent),
-      inset 0 1px 0 rgba(255,255,255,0.28) !important;
-  }
-}
-
-/* Card: stronger inner highlight, warmer shadow */
-.card {
-  box-shadow:
-    0 4px 16px rgba(17,16,22,.07),
-    0 1px 4px rgba(17,16,22,.04),
-    inset 0 1px 0 rgba(255,255,255,.85) !important;
-}
-body.theme-dark .card {
-  box-shadow:
-    0 4px 20px rgba(0,0,0,.28),
-    inset 0 1px 0 rgba(255,255,255,.06) !important;
-  border-color: rgba(255,255,255,.07) !important;
-}
-
-/* Active nav: stronger pill highlight */
-.mob-nav-btn.active {
-  background: color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
-  border-radius: 14px !important;
-}
-.mob-nav-btn.active .mob-nav-label {
-  color: var(--phase-primary) !important;
-}
-
-/* Progress track: phase-tinted fill */
-.progress-bar {
-  background: linear-gradient(90deg,
-    var(--phase-primary),
-    color-mix(in srgb, var(--phase-primary) 70%, var(--phase-secondary))
-  ) !important;
-}
-
-/* Chip tags: phase-aware on hover */
-.chip {
-  transition: background 180ms ease, transform 120ms ease !important;
-}
-.chip:active { transform: scale(0.95) !important; }
-
-/* Streak/score numbers: stronger visual weight */
-.metric-value, .stat-value, .streak-count {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-}
-
-/* Settings: section headers spacing */
-@media (max-width: 430px) {
-  .settings-section + .settings-section { margin-top: 20px !important; }
-}
-
-/* Prefers-reduced-motion: strip all transitions */
-@media (prefers-reduced-motion: reduce) {
-  .btn, .card, .chip, .phase-arc-wrap { transition: none !important; }
-}
-</style>
-
-<style id="bloom-foundation-v1">
-/*
-  ══════════════════════════════════════════════════════════════
-  BLOOM — FOUNDATION v1  (2026-05-06)
-  Premium Wellness App — Complete Design System
-  ──────────────────────────────────────────────────────────────
-  Architecture: Tokens → Canvas → Shell → Onboarding →
-                Header → Hero → Cards → Nav → Responsive
-  Supersedes: reconstruction-v1 + all prior patch blocks.
-  ══════════════════════════════════════════════════════════════
-*/
-
-/* ══ 1. DESIGN TOKENS ═══════════════════════════════════════ */
-:root {
-  /* Spacing (4px base, 8px rhythm) */
-  --sp-1:  4px;   --sp-2:  8px;   --sp-3:  12px;
-  --sp-4:  16px;  --sp-5:  20px;  --sp-6:  24px;
-  --sp-8:  32px;  --sp-10: 40px;  --sp-14: 56px;
-
-  /* Radius */
-  --r-xs:   8px;  --r-sm:  10px;  --r-base: 14px;
-  --r-md:  18px;  --r-lg:  24px;  --r-xl:  32px;
-  --r-full: 999px;
-
-  /* Elevation */
-  --sh-xs:   0 1px 2px rgba(17,16,22,.04);
-  --sh-sm:   0 1px 3px rgba(17,16,22,.05), 0 1px 2px rgba(17,16,22,.03);
-  --sh-md:   0 4px 16px rgba(17,16,22,.07), 0 1px 4px rgba(17,16,22,.04),
-             inset 0 1px 0 rgba(255,255,255,.85);
-  --sh-lg:   0 12px 32px rgba(17,16,22,.10), 0 3px 10px rgba(17,16,22,.05),
-             inset 0 1px 0 rgba(255,255,255,.90);
-  --sh-hero: 0 20px 56px rgba(17,16,22,.10), 0 6px 18px rgba(17,16,22,.06),
-             inset 0 1.5px 0 rgba(255,255,255,.90);
-  --sh-float:0 24px 64px rgba(17,16,22,.13), 0 6px 20px rgba(17,16,22,.07);
-
-  /* Typography */
-  --font-serif: ui-serif, Georgia, 'Times New Roman', serif;
-  --font-ui:    -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
-  /* Font scale */
-  --fs-2xs: 10px;  --fs-xs:  11px;  --fs-sm:  12px;
-  --fs-base: 13px; --fs-md:  14px;  --fs-lg:  15px;
-  --fs-xl:   17px; --fs-2xl: 20px;  --fs-3xl: 24px; --fs-4xl: 30px;
-}
-
-/* ══ 2. BASE RESET ══════════════════════════════════════════ */
-*, *::before, *::after { box-sizing: border-box !important; }
-* { min-width: 0 !important; }
-svg, img, video, canvas, iframe { min-width: auto !important; }
-html { overflow-x: hidden !important; }
-body {
-  overflow-x:          hidden !important;
-  font-family:         var(--font-ui) !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-  -webkit-text-size-adjust: 100% !important;
-}
-
-/* ══ 3. LIGHT MODE CANVAS ═══════════════════════════════════ */
-body:not(.theme-dark) {
-  background:
-    radial-gradient(ellipse 70% 48% at 88% 0%,
-      color-mix(in srgb, var(--phase-primary) 11%, transparent), transparent 58%),
-    radial-gradient(ellipse 50% 38% at 8% 100%,
-      color-mix(in srgb, var(--phase-secondary) 7%, transparent), transparent 52%),
-    linear-gradient(175deg, #f9f8fc 0%, #f5f3fa 45%, #f8f6fb 100%) !important;
-}
-
-/* ══ 4. DARK MODE ═══════════════════════════════════════════ */
-body.theme-dark {
-  --bg:     #0d0b13 !important;
-  --card:   #1a1724 !important;
-  --border: rgba(255,255,255,0.075) !important;
-  --text:   #edeaf6 !important;
-  --muted:  #8a8298 !important;
-  background:
-    radial-gradient(ellipse 65% 40% at 80% 0%,
-      color-mix(in srgb, var(--phase-primary) 9%, transparent), transparent 52%),
-    radial-gradient(ellipse 45% 30% at 15% 95%,
-      color-mix(in srgb, var(--phase-primary) 5%, transparent), transparent 48%),
-    linear-gradient(175deg, #0d0b13 0%, #110f18 50%, #0b0910 100%) !important;
-}
-body.theme-dark .card {
-  background:   #1e1b2a !important;
-  border-color: rgba(255,255,255,0.07) !important;
-  box-shadow:   0 4px 20px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.05) !important;
-}
-body.theme-dark .dashboard-home-hero, body.theme-dark .phase-hero-card {
-  background:
-    radial-gradient(ellipse 78% 52% at 10% 8%,
-      color-mix(in srgb, var(--phase-primary) 18%, transparent) 0%, transparent 54%),
-    linear-gradient(155deg, #201d2c 0%, #191621 100%) !important;
-  border-color: color-mix(in srgb, var(--phase-border-accent) 38%, rgba(255,255,255,.06)) !important;
-  box-shadow:   0 20px 56px rgba(0,0,0,.44), inset 0 1px 0 rgba(255,255,255,.07) !important;
-}
-body.theme-dark .app-header {
-  background:   rgba(18,15,26,.97) !important;
-  border-color: rgba(255,255,255,.07) !important;
-  box-shadow:   0 8px 32px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05) !important;
-}
-body.theme-dark .left-dock {
-  background:   rgba(18,15,26,.96) !important;
-  border-color: rgba(255,255,255,.07) !important;
-}
-body.theme-dark .mobile-bottom-nav {
-  background:      rgba(12,10,20,.97) !important;
-  border-top-color: rgba(255,255,255,.06) !important;
-  box-shadow:      0 -8px 28px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.05) !important;
-}
-body.theme-dark select {
-  background-color:    rgba(24,20,34,.92) !important;
-  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
-  background-repeat:   no-repeat !important;
-  background-position: right 14px center !important;
-  background-size:     10px 6px !important;
-  border-color:        rgba(255,255,255,.12) !important;
-  color:               var(--text) !important;
-}
-body.theme-dark input[type="text"],
-body.theme-dark input[type="number"],
-body.theme-dark textarea {
-  background:   var(--card) !important;
-  border-color: var(--border) !important;
-  color:        var(--text) !important;
-}
-
-/* ══ 5. APP SHELL ═══════════════════════════════════════════ */
-.app-shell {
-  max-width:      1160px !important;
-  margin:         0 auto !important;
-  padding-top:    var(--sp-5) !important;
-  padding-right:  var(--sp-4) !important;
-  padding-bottom: calc(108px + env(safe-area-inset-bottom, 0px)) !important;
-  padding-left:   var(--sp-4) !important;
-}
-/* Tablet: clear 60px sidebar */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .app-shell {
-    padding-left:   88px !important;
-    padding-right:  var(--sp-6) !important;
-    padding-bottom: var(--sp-10) !important;
-  }
-}
-/* Mobile */
-@media (max-width: 767px) {
-  .app-shell {
-    padding-top:    var(--sp-3) !important;
-    padding-left:   var(--sp-3) !important;
-    padding-right:  var(--sp-3) !important;
-    padding-bottom: calc(112px + env(safe-area-inset-bottom, 0px)) !important;
-  }
-}
-@media (max-width: 359px) {
-  .app-shell { padding-left: 10px !important; padding-right: 10px !important; }
-}
-
-/* ══ 6. DASHBOARD SCREEN ════════════════════════════════════ */
-#screen-dashboard.active {
-  display:        flex !important;
-  flex-direction: column !important;
-  gap:            var(--sp-5) !important;
-  max-width:      860px !important;
-}
-
-/* ══ 7. HEADER ══════════════════════════════════════════════ */
-.app-header {
-  border-radius: var(--r-lg) !important;
-  padding:       var(--sp-4) var(--sp-5) !important;
-}
-@media (max-width: 767px) {
-  .app-header { padding: var(--sp-3) var(--sp-4) !important; border-radius: var(--r-md) !important; }
-}
-.brand h1 {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      clamp(24px, 4.5vw, 36px) !important;
-  font-weight:    700 !important;
-  letter-spacing: -0.03em !important;
-  line-height:    1.0 !important;
-}
-.app-header::after {
-  animation:  none !important;
-  background: linear-gradient(90deg, var(--phase-primary), var(--phase-secondary) 45%, var(--phase-primary)) !important;
-  height:     2px !important;
-  opacity:    0.6 !important;
-  margin:     10px -16px -12px !important;
-}
-body.theme-dark .app-header::after { opacity: 0.32 !important; }
-
-/* ══ 8. HERO CARD ═══════════════════════════════════════════ */
-.dashboard-home-hero {
-  padding:       clamp(20px, 5vw, 32px) !important;
-  border-radius: var(--r-xl) !important;
-  background:
-    radial-gradient(ellipse 80% 55% at 8% 6%,
-      color-mix(in srgb, var(--phase-primary) 16%, transparent) 0%, transparent 52%),
-    radial-gradient(ellipse 55% 42% at 93% 90%,
-      color-mix(in srgb, var(--phase-secondary) 10%, transparent) 0%, transparent 48%),
-    linear-gradient(155deg,
-      color-mix(in srgb, var(--phase-bg-from) 88%, white) 0%,
-      color-mix(in srgb, var(--phase-bg-to) 82%, white) 100%) !important;
-  box-shadow:    var(--sh-hero) !important;
-  border-color:  color-mix(in srgb, var(--phase-border-accent) 58%, rgba(255,255,255,.5)) !important;
-}
-
-/* Grid: stacked on mobile, side-by-side at ≥480px */
-.dashboard-home-hero__grid {
-  display:        flex !important;
-  flex-direction: column !important;
-  align-items:    center !important;
-  gap:            var(--sp-4) !important;
-  text-align:     center !important;
-}
-@media (min-width: 480px) {
-  .dashboard-home-hero__grid {
-    flex-direction: row !important;
-    align-items:    center !important;
-    gap:            var(--sp-5) !important;
-    text-align:     left !important;
-  }
-}
-
-/* Ring column */
-.hero-ring-col {
-  flex-shrink:    0 !important;
-  width:          min(172px, 54vw) !important;
-  display:        flex !important;
-  flex-direction: column !important;
-  align-items:    center !important;
-  gap:            var(--sp-2) !important;
-  order:          -1 !important;
-}
-@media (min-width: 480px) {
-  .hero-ring-col { width: min(160px, 30vw) !important; order: 1 !important; }
-}
-@media (min-width: 768px)  { .hero-ring-col { width: min(188px, 24vw) !important; } }
-@media (min-width: 1100px) { .hero-ring-col { width: 210px !important; } }
-
-.hero-ring-col svg, .hero-ring-col .cycle-ritual-ring {
-  width:  100% !important;
-  height: auto !important;
-  filter: drop-shadow(0 10px 26px color-mix(in srgb, var(--phase-primary) 24%, transparent)) !important;
-}
-
-/* Text column */
-.dashboard-home-hero__text-col {
-  flex:       1 !important;
-  min-width:  0 !important;
-  text-align: center !important;
-}
-@media (min-width: 480px) {
-  .dashboard-home-hero__text-col { text-align: left !important; }
-}
-
-/* Phase name — dominant serif anchor */
-.dashboard-home-hero__phase {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      clamp(22px, 6vw, 38px) !important;
-  letter-spacing: -0.025em !important;
-  line-height:    1.05 !important;
-  margin-bottom:  var(--sp-2) !important;
-  color:          var(--phase-text-accent) !important;
-}
-
-/* Greeting / soul line */
-.dashboard-home-hero__greet,
-.dashboard-home-hero__soul-line,
-.dashboard-home-hero__phase-focus-line,
-.dashboard-home-hero__focus-line {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      clamp(17px, 4.5vw, 22px) !important;
-  line-height:    1.32 !important;
-  font-weight:    600 !important;
-  color:          var(--text) !important;
-  margin:         0 0 var(--sp-3) !important;
-  letter-spacing: -0.01em !important;
-}
-@media (min-width: 600px) {
-  .dashboard-home-hero__greet,
-  .dashboard-home-hero__soul-line,
-  .dashboard-home-hero__phase-focus-line {
-    font-size: clamp(18px, 3.5vw, 24px) !important;
-  }
-}
-
-/* Meta line (Day X · Phase) */
-.dashboard-home-hero__meta {
-  font-size:     var(--fs-base) !important;
-  color:         var(--muted) !important;
-  margin-bottom: var(--sp-2) !important;
-  line-height:   1.4 !important;
-}
-
-/* Body micro-text */
-.dashboard-home-hero__micro {
-  font-size:     var(--fs-base) !important;
-  line-height:   1.55 !important;
-  color:         var(--text) !important;
-  opacity:       0.85 !important;
-  margin-bottom: var(--sp-4) !important;
-}
-@media (max-width: 479px) {
-  .dashboard-home-hero__micro {
-    font-size:     12px !important;
-    opacity:       0.72 !important;
-    margin-bottom: var(--sp-3) !important;
-  }
-  .dashboard-home-hero__primary-wrap { text-align: center !important; }
-  .phase-quick-strip { justify-content: center !important; }
-}
-
-/* Primary CTA */
-.dashboard-home-hero__primary {
-  border-radius:  var(--r-full) !important;
-  font-size:      var(--fs-lg) !important;
-  font-weight:    600 !important;
-  padding:        11px 22px !important;
-  letter-spacing: -0.01em !important;
-}
-
-/* Very small screens */
-@media (max-width: 359px) {
-  .dashboard-home-hero      { padding: 14px !important; }
-  .hero-ring-col            { width: min(136px, 48vw) !important; }
-  .dashboard-home-hero__phase { font-size: clamp(20px, 7.5vw, 26px) !important; }
-  .dashboard-home-hero__greet,
-  .dashboard-home-hero__soul-line,
-  .dashboard-home-hero__phase-focus-line { font-size: clamp(15px, 5.5vw, 18px) !important; }
-}
-
-/* Phase hero card (alternate) */
-.phase-hero-card {
-  border-radius: var(--r-xl) !important;
-  padding:       clamp(18px, 4.5vw, 28px) !important;
-}
-.phase-hero-name {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      clamp(22px, 5.5vw, 32px) !important;
-  letter-spacing: -0.02em !important;
-}
-
-/* ══ 9. DONUT RING ═══════════════════════════════════════════ */
-.cycle-ritual-ring {
-  width:    100% !important;
-  max-width: none !important;
-  overflow: visible !important;
-}
-/* Ring text inside donut */
-.cycle-ring-phase {
-  font-family: var(--font-serif) !important;
-  font-style:  italic !important;
-  font-size:   14px !important;
-  font-weight: 600 !important;
-  fill:        var(--phase-text-accent) !important;
-}
-.cycle-ring-daycount {
-  font-size:   13px !important;
-  font-weight: 600 !important;
-  fill:        var(--phase-text-accent) !important;
-}
-/* Glowing bar */
-#dashCycleRingBar {
-  stroke:        url(#bloomCycleGradient) !important;
-  filter:        drop-shadow(0 0 6px color-mix(in srgb, var(--phase-primary) 42%, transparent)) !important;
-  transition:    stroke-dashoffset 1s cubic-bezier(.2,.9,.2,1) !important;
-}
-
-/* Phase arc wrap */
-.phase-arc-wrap {
-  width:  min(148px, 42vw) !important;
-  height: min(148px, 42vw) !important;
-  filter: drop-shadow(0 8px 22px color-mix(in srgb, var(--phase-primary) 22%, transparent)) !important;
-}
-@media (max-width: 767px) {
-  .phase-arc-wrap { width: min(128px, 40vw) !important; height: min(128px, 40vw) !important; }
-}
-
-/* ══ 10. CARD SYSTEM ═════════════════════════════════════════ */
-.card {
-  border-radius: var(--r-lg) !important;
-  box-shadow:    var(--sh-md) !important;
-  background:    rgba(255,255,255,0.88) !important;
-  border-color:  rgba(220,215,235,0.7) !important;
-  transition:    transform 180ms cubic-bezier(0.22,1,0.36,1),
-                 box-shadow 200ms ease !important;
-}
-@media (hover: hover) {
-  .card:hover { transform: translateY(-2px) !important; box-shadow: var(--sh-lg) !important; }
-}
-
-/* ══ 11. GRID SYSTEM ══════════════════════════════════════════ */
-.grid { gap: var(--sp-4) !important; }
-.grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-.grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
-.grid.cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
-@media (max-width: 767px) {
-  .grid.cols-2, .grid.cols-3, .grid.cols-4 { grid-template-columns: 1fr !important; }
-}
-@media (min-width: 480px) and (max-width: 767px) {
-  .grid.cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-}
-.snapshot-strip {
-  display:               grid !important;
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap:                   var(--sp-3) !important;
-}
-
-/* ══ 12. BOTTOM NAVIGATION ═══════════════════════════════════ */
-.mobile-bottom-nav {
-  background:           rgba(252,250,255,0.95) !important;
-  border-top:           1px solid rgba(215,210,235,0.5) !important;
-  backdrop-filter:      blur(28px) !important;
-  -webkit-backdrop-filter: blur(28px) !important;
-  box-shadow:           0 -8px 28px rgba(17,16,22,.09),
-                        inset 0 1px 0 rgba(255,255,255,.95) !important;
-  padding: 4px
-           max(8px, env(safe-area-inset-right, 0px))
-           calc(4px + env(safe-area-inset-bottom, 0px))
-           max(8px, env(safe-area-inset-left, 0px)) !important;
-}
-.mobile-bottom-nav-inner {
-  max-width: 500px !important;
-  margin:    0 auto !important;
-  gap:       0 !important;
-}
-.mob-nav-btn {
-  display:         flex !important;
-  flex-direction:  column !important;
-  align-items:     center !important;
-  justify-content: center !important;
-  gap:             3px !important;
-  font-size:       10px !important;
-  font-weight:     600 !important;
-  letter-spacing:  0.025em !important;
-  color:           var(--muted) !important;
-  padding:         8px 4px 6px !important;
-  border-radius:   14px !important;
-  border:          none !important;
-  background:      transparent !important;
-  cursor:          pointer !important;
-  flex:            1 1 0 !important;
-  min-width:       0 !important;
-  min-height:      48px !important;
-  transition:      color .13s ease, background .13s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-.mob-nav-btn.active {
-  color:      var(--phase-text-accent) !important;
-  background: color-mix(in srgb, var(--phase-card-accent) 78%, transparent) !important;
-}
-.mob-nav-btn.active::after { display: none !important; }
-.mob-nav-btn.active svg {
-  transform: scale(1.14) translateY(-1px) !important;
-  filter:    drop-shadow(0 2px 5px color-mix(in srgb, var(--phase-primary) 32%, transparent)) !important;
-}
-body.theme-dark .mob-nav-btn       { color: var(--muted) !important; }
-body.theme-dark .mob-nav-btn.active {
-  background: color-mix(in srgb, var(--phase-primary) 16%, rgba(255,255,255,.04)) !important;
-  color:      var(--phase-text-accent) !important;
-}
-.mob-nav-dot {
-  width:         4px !important;
-  height:        4px !important;
-  border-radius: 50% !important;
-  background:    transparent !important;
-  margin:        1px auto 0 !important;
-  transition:    background .13s ease !important;
-}
-.mob-nav-btn.active .mob-nav-dot { background: var(--phase-primary) !important; }
-@media (max-width: 359px) {
-  .mob-nav-btn { font-size: 9px !important; padding: 8px 2px 5px !important; }
-}
-@media (max-width: 330px) {
-  .mob-nav-label { display: none !important; }
-  .mob-nav-btn   { gap: 0 !important; padding: 10px 6px !important; }
-}
-
-/* ══ 13. LEFT DOCK ═══════════════════════════════════════════ */
-.left-dock {
-  position:        fixed !important;
-  left:            12px !important;
-  top:             50% !important;
-  transform:       translateY(-50%) !important;
-  z-index:         45 !important;
-  width:           58px !important;
-  border-radius:   20px !important;
-  background:      rgba(255,255,255,.92) !important;
-  border:          1px solid rgba(255,255,255,.72) !important;
-  box-shadow:      0 8px 32px rgba(17,16,22,.09),
-                   inset 0 1px 0 rgba(255,255,255,.95) !important;
-  backdrop-filter: blur(14px) !important;
-  -webkit-backdrop-filter: blur(14px) !important;
-  padding:         10px 6px !important;
-  display:         none !important;
-  flex-direction:  column !important;
-  align-items:     center !important;
-  gap:             4px !important;
-}
-@media (min-width: 768px) { .left-dock { display: flex !important; } }
-/* Sidebar clearance fix (overrides layout-stabilisation-final) */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .app-shell { padding-left: 88px !important; }
-}
-
-/* ══ 14. SELECT DROPDOWNS ════════════════════════════════════ */
-select {
-  -webkit-appearance: none !important;
-  appearance:         none !important;
-  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E") !important;
-  background-repeat:   no-repeat !important;
-  background-position: right 14px center !important;
-  background-size:     10px 6px !important;
-  padding-right:       36px !important;
-  border-radius:       var(--r-base) !important;
-  border:              1px solid var(--border, #e5e7eb) !important;
-  font-size:           var(--fs-md) !important;
-}
-
-/* ══ 15. PROGRESS + PROGRESS SCREEN ══════════════════════════ */
-#screen-progress .card { box-shadow: 0 6px 22px rgba(17,16,22,.09) !important; }
-
-/* ══ 16. WORKOUT SCREEN HERO ══════════════════════════════════ */
-#screen-daily-workout > .card:first-child {
-  border-radius: var(--r-xl) !important;
-  background:
-    radial-gradient(ellipse 70% 50% at 5% 0%,
-      color-mix(in srgb, var(--phase-primary) 14%, transparent) 0%, transparent 56%),
-    linear-gradient(148deg,
-      color-mix(in srgb, var(--phase-bg-from) 90%, white) 0%,
-      color-mix(in srgb, var(--phase-bg-to) 80%, white) 100%) !important;
-}
-
-/* ══ 17. SECTION TITLES + KICKERS ════════════════════════════ */
-.section-title {
-  font-size:      clamp(15px, 2.5vw, 18px) !important;
-  font-weight:    700 !important;
-  letter-spacing: -0.02em !important;
-  line-height:    1.25 !important;
-}
-.kicker {
-  font-size:      var(--fs-xs) !important;
-  font-weight:    700 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-  color:          var(--muted) !important;
-}
-
-/* ══ 18. DASHBOARD CARD EYEBROWS + LEADS ════════════════════ */
-.dashboard-card__eyebrow {
-  font-size:      var(--fs-xs) !important;
-  font-weight:    700 !important;
-  letter-spacing: 0.07em !important;
-  text-transform: uppercase !important;
-  color:          var(--muted) !important;
-  margin-bottom:  var(--sp-2) !important;
-}
-.dashboard-card__headline {
-  font-size:      clamp(17px, 3vw, 22px) !important;
-  font-weight:    700 !important;
-  letter-spacing: -0.02em !important;
-  line-height:    1.2 !important;
-  margin-bottom:  var(--sp-2) !important;
-}
-.dashboard-card__lead {
-  font-size:   var(--fs-md) !important;
-  line-height: 1.5 !important;
-  color:       var(--text) !important;
-}
-.dashboard-card__affirm {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      var(--fs-base) !important;
-  color:          var(--phase-text-accent) !important;
-  line-height:    1.55 !important;
-  margin-top:     var(--sp-2) !important;
-}
-
-/* ══ 19. WEEK-PREVIEW + ENERGY PREVIEW ══════════════════════ */
-body.theme-dark .week-preview,
-body.theme-dark .energy-preview-section,
-body.theme-dark [class*="week-card"] {
-  background:   linear-gradient(145deg, #1e1b2a, #18152090) !important;
-  border-color: rgba(255,255,255,.07) !important;
-}
-body.theme-dark .educational-block {
-  background:   color-mix(in srgb, var(--phase-primary) 10%, #1a1724) !important;
-  border-color: color-mix(in srgb, var(--phase-primary) 18%, rgba(255,255,255,.06)) !important;
-}
-
-/* ══ 20. FORMS + INPUTS ══════════════════════════════════════ */
-input[type="text"], input[type="number"], input[type="email"], textarea {
-  border-radius: var(--r-base) !important;
-  border:        1px solid var(--border, #e5e7eb) !important;
-  font-size:     var(--fs-md) !important;
-  padding:       10px 14px !important;
-  transition:    border-color .15s ease, box-shadow .15s ease !important;
-}
-input[type="text"]:focus,
-input[type="number"]:focus,
-textarea:focus {
-  border-color: var(--phase-primary) !important;
-  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 16%, transparent) !important;
-  outline:      none !important;
-}
-
-/* ══ 21. ONBOARDING — MULTI-STEP FOUNDATION ═════════════════ */
-
-/* Overlay */
-.onboarding-overlay {
-  position:        fixed !important;
-  inset:           0 !important;
-  z-index:         10001 !important;
-  display:         flex !important;
-  align-items:     flex-start !important;
-  justify-content: center !important;
-  background:
-    radial-gradient(120% 80% at 50% 0%,
-      color-mix(in srgb, var(--phase-card-accent) 38%, #f3f0fa),
-      rgba(248,247,251,.97)) !important;
-  padding: max(16px, env(safe-area-inset-top))
-           max(16px, env(safe-area-inset-right))
-           max(16px, env(safe-area-inset-bottom))
-           max(16px, env(safe-area-inset-left)) !important;
-  overflow-y:      auto !important;
-  -webkit-overflow-scrolling: touch !important;
-  flex-direction:  column !important;
-  gap:             16px !important;
-}
-body.theme-dark .onboarding-overlay {
-  background:
-    radial-gradient(100% 70% at 50% 0%,
-      color-mix(in srgb, var(--phase-card-accent) 14%, #121018),
-      rgba(10,9,14,.97)) !important;
-}
-
-/* Progress dots */
-.ob-progress {
-  display:         flex !important;
-  align-items:     center !important;
-  justify-content: center !important;
-  gap:             8px !important;
-  padding-top:     4px !important;
-  flex-shrink:     0 !important;
-}
-.ob-dot {
-  width:        8px !important;
-  height:       8px !important;
-  border-radius: 50% !important;
-  background:   rgba(167,139,250,0.28) !important;
-  transition:   background .22s ease, width .22s ease, border-radius .22s ease !important;
-}
-.ob-dot--active {
-  width:      24px !important;
-  background: var(--phase-primary) !important;
-  border-radius: 4px !important;
-}
-.ob-dot--done { background: color-mix(in srgb, var(--phase-primary) 55%, transparent) !important; }
-
-/* Onboarding card (panel container) */
-.onboarding-card {
-  width:         100% !important;
-  max-width:     480px !important;
-  border-radius: var(--r-xl) !important;
-  padding:       clamp(24px, 6vw, 36px) !important;
-  background:    rgba(255,255,255,.96) !important;
-  border:        1px solid rgba(220,215,235,.6) !important;
-  box-shadow:    var(--sh-hero) !important;
-  position:      relative !important;
-}
-.onboarding-card--branded {
-  background:
-    linear-gradient(168deg,
-      color-mix(in srgb, var(--phase-card-accent) 28%, rgba(255,255,255,.98)),
-      rgba(255,255,255,.95)) !important;
-  border-color: color-mix(in srgb, var(--phase-border-accent) 48%, rgba(255,255,255,.7)) !important;
-}
-body.theme-dark .onboarding-card {
-  background:   color-mix(in srgb, #1a1724 94%, var(--phase-card-accent)) !important;
-  border-color: rgba(255,255,255,.09) !important;
-}
-body.theme-dark .onboarding-card--branded {
-  background:
-    linear-gradient(168deg,
-      color-mix(in srgb, var(--phase-card-accent) 22%, #1c1a22),
-      #15131a) !important;
-  border-color: color-mix(in srgb, var(--phase-border-accent) 35%, var(--border)) !important;
-}
-
-/* Panel animation */
-@keyframes ob-slide-in {
-  from { opacity: 0; transform: translateY(14px) scale(.985); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-.ob-panel--active {
-  animation: ob-slide-in .28s cubic-bezier(0.22, 1, 0.36, 1) both !important;
-}
-@media (prefers-reduced-motion: reduce) {
-  .ob-panel--active { animation: none !important; }
-}
-
-/* Brand header */
-.onboarding-brand {
-  display:         flex !important;
-  align-items:     center !important;
-  gap:             12px !important;
-  margin-bottom:   var(--sp-5) !important;
-  padding-bottom:  var(--sp-5) !important;
-  border-bottom:   1px solid var(--phase-border-accent, rgba(220,215,235,.6)) !important;
-}
-.onboarding-brand__emoji { font-size: 32px !important; flex-shrink: 0 !important; }
-.onboarding-brand__name {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-weight:    700 !important;
-  font-size:      clamp(22px, 4.2vw, 28px) !important;
-  margin:         0 !important;
-  line-height:    1.12 !important;
-  color:          var(--phase-text-accent, #5f4ea1) !important;
-  letter-spacing: .01em !important;
-}
-.onboarding-brand__tagline {
-  font-size:  var(--fs-sm) !important;
-  color:      var(--muted) !important;
-  margin:     3px 0 0 !important;
-  line-height: 1.4 !important;
-}
-
-/* Headings + lead */
-.onboarding-heading {
-  font-size:      clamp(18px, 3.2vw, 22px) !important;
-  font-weight:    700 !important;
-  margin:         0 0 var(--sp-2) !important;
-  letter-spacing: -0.02em !important;
-  line-height:    1.2 !important;
-  color:          var(--text) !important;
-}
-body.theme-dark .onboarding-overlay .onboarding-heading { color: #fecdd3 !important; }
-.onboarding-lead {
-  font-size:     var(--fs-base) !important;
-  color:         var(--muted) !important;
-  line-height:   1.55 !important;
-  margin:        0 0 var(--sp-5) !important;
-}
-
-/* Step content spacing */
-.ob-step-content { margin-bottom: var(--sp-5) !important; }
-
-/* Privacy note */
-.ob-privacy-note {
-  display:        flex !important;
-  align-items:    center !important;
-  gap:            6px !important;
-  font-size:      var(--fs-sm) !important;
-  color:          var(--muted) !important;
-  margin-top:     var(--sp-3) !important;
-  padding:        8px 12px !important;
-  border-radius:  var(--r-sm) !important;
-  background:     color-mix(in srgb, var(--phase-card-accent) 38%, rgba(248,247,251,.8)) !important;
-  border:         1px solid color-mix(in srgb, var(--phase-border-accent) 35%, transparent) !important;
-}
-.ob-privacy-icon { font-size: 13px !important; }
-
-/* Back button */
-.ob-back-btn {
-  display:         flex !important;
-  align-items:     center !important;
-  gap:             6px !important;
-  font-size:       var(--fs-base) !important;
-  font-weight:     600 !important;
-  color:           var(--muted) !important;
-  background:      transparent !important;
-  border:          none !important;
-  padding:         0 0 var(--sp-4) !important;
-  cursor:          pointer !important;
-  min-height:      auto !important;
-  -webkit-tap-highlight-color: transparent !important;
-  transition:      color .12s ease !important;
-}
-.ob-back-btn:hover { color: var(--text) !important; }
-
-/* Actions row */
-.ob-actions {
-  display:        flex !important;
-  flex-direction: column !important;
-  gap:            var(--sp-2) !important;
-  margin-top:     var(--sp-4) !important;
-}
-.ob-next {
-  width:          100% !important;
-  font-size:      var(--fs-lg) !important;
-  font-weight:    600 !important;
-  border-radius:  var(--r-full) !important;
-  padding:        13px 22px !important;
-  letter-spacing: -0.01em !important;
-}
-.ob-skip-btn {
-  background:      transparent !important;
-  border:          none !important;
-  color:           var(--muted) !important;
-  font-size:       var(--fs-sm) !important;
-  font-weight:     500 !important;
-  min-height:      auto !important;
-  padding:         6px 0 !important;
-  text-align:      center !important;
-  cursor:          pointer !important;
-}
-.ob-skip-btn:hover { color: var(--text) !important; }
-
-/* ── Phase Cards (Step 2) ─────────────────────────── */
-.ob-phase-grid {
-  display:               grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap:                   var(--sp-3) !important;
-  margin-bottom:         var(--sp-5) !important;
-}
-.ob-phase-card {
-  display:         flex !important;
-  flex-direction:  column !important;
-  align-items:     flex-start !important;
-  gap:             4px !important;
-  padding:         14px 16px !important;
-  border-radius:   var(--r-md) !important;
-  border:          2px solid rgba(220,215,235,.55) !important;
-  background:      rgba(255,255,255,.7) !important;
-  cursor:          pointer !important;
-  text-align:      left !important;
-  min-height:      96px !important;
-  transition:      border-color .15s ease, background .15s ease, transform .12s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-.ob-phase-card:hover  { border-color: var(--phase-border-accent) !important; background: color-mix(in srgb, var(--phase-card-accent) 44%, white) !important; }
-.ob-phase-card:active { transform: scale(.97) !important; }
-.ob-phase-card--selected {
-  border-color: var(--phase-primary) !important;
-  background:   color-mix(in srgb, var(--phase-card-accent) 62%, white) !important;
-  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 18%, transparent) !important;
-}
-body.theme-dark .ob-phase-card {
-  background:   var(--card) !important;
-  border-color: var(--border) !important;
-}
-body.theme-dark .ob-phase-card--selected {
-  border-color: var(--phase-primary) !important;
-  background:   color-mix(in srgb, var(--phase-card-accent) 35%, var(--card)) !important;
-}
-.ob-phase-card__emoji {
-  font-size:   22px !important;
-  line-height: 1 !important;
-  margin-bottom: 2px !important;
-}
-.ob-phase-card__name {
-  font-size:      var(--fs-md) !important;
-  font-weight:    700 !important;
-  color:          var(--text) !important;
-  letter-spacing: -0.01em !important;
-  line-height:    1.2 !important;
-}
-.ob-phase-card__hint {
-  font-size:   var(--fs-sm) !important;
-  color:       var(--muted) !important;
-  line-height: 1.4 !important;
-}
-
-/* ── Cycle-length stepper ─────────────────────────── */
-.ob-cycle-length-row {
-  display:     flex !important;
-  align-items: center !important;
-  gap:         var(--sp-3) !important;
-  flex-wrap:   wrap !important;
-}
-.ob-cycle-label {
-  font-size:   var(--fs-md) !important;
-  font-weight: 600 !important;
-  color:       var(--text) !important;
-  flex-shrink: 0 !important;
-}
-.ob-stepper {
-  display:     flex !important;
-  align-items: center !important;
-  gap:         0 !important;
-  border:      1px solid var(--border, #e5e7eb) !important;
-  border-radius: var(--r-base) !important;
-  overflow:    hidden !important;
-  background:  var(--card, white) !important;
-}
-.ob-stepper-btn {
-  width:            40px !important;
-  height:           40px !important;
-  display:          flex !important;
-  align-items:      center !important;
-  justify-content:  center !important;
-  font-size:        20px !important;
-  font-weight:      300 !important;
-  border:           none !important;
-  background:       transparent !important;
-  color:            var(--phase-text-accent) !important;
-  cursor:           pointer !important;
-  min-height:       40px !important;
-  transition:       background .12s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-.ob-stepper-btn:hover { background: color-mix(in srgb, var(--phase-card-accent) 50%, transparent) !important; }
-.ob-stepper input[type="number"] {
-  width:       52px !important;
-  text-align:  center !important;
-  border:      none !important;
-  border-left: 1px solid var(--border, #e5e7eb) !important;
-  border-right:1px solid var(--border, #e5e7eb) !important;
-  border-radius: 0 !important;
-  font-size:   var(--fs-md) !important;
-  font-weight: 700 !important;
-  padding:     0 !important;
-  height:      40px !important;
-  background:  transparent !important;
-  color:       var(--text) !important;
-  -webkit-appearance: textfield !important;
-  appearance:  textfield !important;
-}
-.ob-stepper input[type="number"]::-webkit-outer-spin-button,
-.ob-stepper input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none !important; }
-.ob-cycle-hint {
-  font-size:  var(--fs-sm) !important;
-  color:      var(--muted) !important;
-}
-
-/* ── Energy buttons (Step 3) ──────────────────────── */
-.ob-energy-grid {
-  display:               grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap:                   var(--sp-3) !important;
-  margin-bottom:         var(--sp-2) !important;
-}
-@media (min-width: 400px) {
-  .ob-energy-grid { grid-template-columns: repeat(4, 1fr) !important; }
-}
-.ob-energy-btn {
-  display:         flex !important;
-  flex-direction:  column !important;
-  align-items:     center !important;
-  gap:             4px !important;
-  padding:         12px 8px !important;
-  border-radius:   var(--r-md) !important;
-  border:          2px solid rgba(220,215,235,.55) !important;
-  background:      rgba(255,255,255,.7) !important;
-  cursor:          pointer !important;
-  text-align:      center !important;
-  min-height:      84px !important;
-  transition:      border-color .15s ease, background .15s ease, transform .12s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-.ob-energy-btn:active { transform: scale(.97) !important; }
-.ob-energy-btn--selected {
-  border-color: var(--phase-primary) !important;
-  background:   color-mix(in srgb, var(--phase-card-accent) 58%, white) !important;
-  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 18%, transparent) !important;
-}
-body.theme-dark .ob-energy-btn {
-  background:   var(--card) !important;
-  border-color: var(--border) !important;
-}
-body.theme-dark .ob-energy-btn--selected {
-  border-color: var(--phase-primary) !important;
-  background:   color-mix(in srgb, var(--phase-card-accent) 35%, var(--card)) !important;
-}
-.ob-energy-icon  { font-size: 20px !important; line-height: 1 !important; }
-.ob-energy-label { font-size: var(--fs-md) !important; font-weight: 700 !important; color: var(--text) !important; line-height: 1.2 !important; }
-.ob-energy-hint  { font-size: var(--fs-sm) !important; color: var(--muted) !important; line-height: 1.35 !important; }
-
-/* ── Goal section (Step 3) ────────────────────────── */
-.ob-goal-section {
-  margin-top:    var(--sp-5) !important;
-  padding-top:   var(--sp-5) !important;
-  border-top:    1px solid rgba(220,215,235,.5) !important;
-}
-.ob-goal-label {
-  font-size:      var(--fs-md) !important;
-  font-weight:    700 !important;
-  color:          var(--text) !important;
-  margin:         0 0 var(--sp-3) !important;
-  display:        block !important;
-  letter-spacing: -0.01em !important;
-}
-
-/* Goal grid */
-.onboarding-goal-grid {
-  display:               grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap:                   var(--sp-2) !important;
-}
-.goal-btn {
-  padding:       10px 14px !important;
-  border-radius: var(--r-base) !important;
-  border:        2px solid rgba(220,215,235,.55) !important;
-  background:    rgba(255,255,255,.7) !important;
-  font-size:     var(--fs-base) !important;
-  font-weight:   600 !important;
-  color:         var(--text) !important;
-  cursor:        pointer !important;
-  text-align:    left !important;
-  min-height:    44px !important;
-  transition:    border-color .15s ease, background .15s ease !important;
-  -webkit-tap-highlight-color: transparent !important;
-}
-.goal-btn.active {
-  border-color: var(--phase-primary) !important;
-  background:   color-mix(in srgb, var(--phase-card-accent) 60%, white) !important;
-  color:        var(--phase-text-accent) !important;
-}
-body.theme-dark .goal-btn        { background: var(--card) !important; border-color: var(--border) !important; color: var(--text) !important; }
-body.theme-dark .goal-btn.active { background: color-mix(in srgb, var(--phase-card-accent) 35%, var(--card)) !important; border-color: var(--phase-primary) !important; color: var(--phase-text-accent) !important; }
-
-/* Footnote */
-.onboarding-footnote {
-  font-size:   var(--fs-sm) !important;
-  color:       var(--muted) !important;
-  margin:      0 0 var(--sp-3) !important;
-  line-height: 1.55 !important;
-}
-
-/* ══ 22. SCREENSHOT / DEMO MODE ══════════════════════════════ */
-body.visual-review-mode .onboarding-overlay,
-.visual-review-mode .onboarding-overlay { display: none !important; }
-body[data-screenshot="1"] .onboarding-overlay { display: none !important; }
-
-/* ══ 23. SECTION CARDS — DASHBOARD RHYTHM ════════════════════ */
-.dashboard-card { border-radius: var(--r-lg) !important; }
-.dashboard-card--featured {
-  border-radius:  var(--r-xl) !important;
-  padding:        clamp(18px, 4vw, 28px) !important;
-}
-.dashboard-card--alignment,
-.dashboard-card--support {
-  padding: clamp(14px, 3.5vw, 20px) !important;
-}
-.dashboard-support-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0,1fr)) !important;
-  gap:     var(--sp-4) !important;
-}
-@media (max-width: 579px) {
-  .dashboard-support-grid { grid-template-columns: 1fr !important; }
-}
-
-/* ══ 24. STAT CHIPS ═══════════════════════════════════════════ */
-.stat-chip {
-  padding:       var(--sp-3) !important;
-  border-radius: var(--r-base) !important;
-  border:        1px solid rgba(220,215,235,.5) !important;
-  background:    rgba(255,255,255,.72) !important;
-  text-align:    center !important;
-}
-body.theme-dark .stat-chip {
-  background:   rgba(255,255,255,.04) !important;
-  border-color: var(--border) !important;
-}
-.stat-value {
-  display:        block !important;
-  font-size:      clamp(18px, 4vw, 24px) !important;
-  font-weight:    800 !important;
-  letter-spacing: -0.03em !important;
-  line-height:    1 !important;
-  color:          var(--phase-text-accent) !important;
-  margin-bottom:  3px !important;
-}
-.stat-label {
-  display:     block !important;
-  font-size:   var(--fs-xs) !important;
-  color:       var(--muted) !important;
-  line-height: 1.35 !important;
-}
-
-/* ══ 25. TAGS + PILLS ════════════════════════════════════════ */
-.tag {
-  border-radius: var(--r-full) !important;
-  font-size:     var(--fs-sm) !important;
-  font-weight:   600 !important;
-  padding:       4px 10px !important;
-  display:       inline-flex !important;
-  align-items:   center !important;
-}
-.pill {
-  border-radius: var(--r-full) !important;
-  font-size:     var(--fs-sm) !important;
-  padding:       3px 9px !important;
-}
-
-/* ══ 26. BUTTONS ════════════════════════════════════════════ */
-.btn {
-  border-radius:  var(--r-full) !important;
-  font-size:      var(--fs-md) !important;
-  font-weight:    600 !important;
-  letter-spacing: -0.01em !important;
-  transition:     transform .12s ease, box-shadow .12s ease, background .15s ease !important;
-}
-.btn:active { transform: scale(.97) !important; }
-@media (hover: hover) {
-  .btn:not(.secondary):hover { box-shadow: 0 4px 16px color-mix(in srgb, var(--phase-primary) 28%, transparent) !important; }
-}
-
-/* ══ 27. MILESTONE / TOAST ═══════════════════════════════════ */
-.toast {
-  border-radius: var(--r-xl) !important;
-  font-size:     var(--fs-md) !important;
-  font-weight:   600 !important;
-}
-
-/* ══ 28. DESKTOP MAX-WIDTH CONSTRAINT ════════════════════════ */
-@media (min-width: 900px) {
-  .mobile-bottom-nav { display: none !important; }
-}
-
-/* ══ 29. TABLET LAYOUT ═══════════════════════════════════════ */
-@media (min-width: 768px) and (max-width: 1023px) {
-  #screen-dashboard.active { max-width: 720px !important; }
-}
-
-/* ══ 30. REDUCED MOTION ══════════════════════════════════════ */
-@media (prefers-reduced-motion: reduce) {
-  .ob-panel--active,
-  .dashboard-home-hero, .card,
-  .btn, .mob-nav-btn { animation: none !important; transition: none !important; }
-}
-
-/* ══ 31. PRINT ═══════════════════════════════════════════════ */
-@media print {
-  .mobile-bottom-nav, .left-dock, .quick-log-bar { display: none !important; }
-  .app-shell { max-width: 100% !important; padding: 0 !important; }
-}
-</style>
-
-<style id="bloom-polish-v1">
-/*
-  ══════════════════════════════════════════════════════════════
-  BLOOM — PRECISION POLISH v1  (2026-05-06)
-  Post-Foundation: micro-precision, hierarchy tightening,
-  responsive stabilisation, premium finish layer.
-  ══════════════════════════════════════════════════════════════
-*/
-
-/* ── P1. HERO: RING COLUMN CLEANUP ──────────────────────── */
-/* Remove weak filler label under donut ring */
-.dashboard-home-hero__donut-label { display: none !important; }
-
-/* Ring col: tighter gap between ring, phase strip, label */
-.hero-ring-col {
-  gap: var(--sp-1) !important;
-}
-/* Phase strip: premium 4px pill under ring */
-.hero-phase-strip {
-  width: 100%;
-  margin-top: var(--sp-2) !important;
-}
-.hero-phase-strip__bar {
-  height: 4px !important;
-  border-radius: var(--r-full) !important;
-  overflow: hidden !important;
-  display: flex !important;
-  position: relative !important;
-}
-.hero-phase-strip__dot {
-  position: absolute !important;
-  top: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  width: 9px !important; height: 9px !important;
-  border-radius: 50% !important;
-  background: var(--phase-primary) !important;
-  border: 1.5px solid rgba(255,255,255,.95) !important;
-  box-shadow: 0 1px 4px rgba(0,0,0,.18) !important;
-}
-body.theme-dark .hero-phase-strip__dot { border-color: rgba(30,26,38,.9) !important; }
-.hero-phase-strip__label {
-  font-size: 10px !important;
-  color: var(--muted) !important;
-  margin-top: 5px !important;
-  line-height: 1.35 !important;
-  text-align: center !important;
-  letter-spacing: 0.015em !important;
-}
-
-/* ── P2. HERO: TEXT COLUMN PRECISION ────────────────────── */
-/* Meta line: cycle day + phase — subdued, informational */
-.dashboard-home-hero__meta {
-  font-size: 12px !important;
-  margin-bottom: var(--sp-2) !important;
-  opacity: 0.75 !important;
-  letter-spacing: 0.01em !important;
-  line-height: 1.4 !important;
-}
-
-/* Phase direction line: italic serif accent */
-.dashboard-home-hero__phase-focus-line {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      clamp(13px, 3.4vw, 15px) !important;
-  color:          var(--phase-text-accent) !important;
-  margin-bottom:  var(--sp-2) !important;
-  opacity:        0.9 !important;
-  line-height:    1.45 !important;
-}
-
-/* Micro support text: smaller, lighter */
-.dashboard-home-hero__micro {
-  font-size:     12px !important;
-  opacity:       0.6 !important;
-  margin-bottom: var(--sp-3) !important;
-  line-height:   1.5 !important;
-}
-
-/* Soul line: tighter vertical rhythm */
-.dashboard-home-hero__soul-line {
-  line-height:   1.26 !important;
-  margin-bottom: var(--sp-2) !important;
-}
-
-/* More-actions accordion: very subtle */
-details.bloom-hero-more-actions summary.bloom-hero-more-summary {
-  font-size: 11px !important;
-  padding:   3px 0 !important;
-  opacity:   0.7 !important;
-}
-.bloom-hero-privacy {
-  margin-top: var(--sp-1) !important;
-  opacity:    0.52 !important;
-}
-
-/* ── P3. HERO CARD: MOBILE REFINEMENTS ──────────────────── */
-@media (max-width: 479px) {
-  /* Ring: bigger on mobile — dominant visual anchor */
-  .hero-ring-col { width: min(192px, 58vw) !important; }
-
-  /* Card: comfortable padding, not cramped */
-  .dashboard-home-hero { padding: 22px 18px 20px !important; }
-
-  /* Stack gap: enough breathing room */
-  .dashboard-home-hero__grid { gap: var(--sp-5) !important; }
-
-  /* Soul line: tighter at 390 */
-  .dashboard-home-hero__soul-line {
-    font-size: clamp(18px, 5.6vw, 23px) !important;
-  }
-}
-/* Very small screens: compress aggressively */
-@media (max-width: 359px) {
-  .hero-ring-col { width: min(156px, 52vw) !important; }
-  .dashboard-home-hero { padding: 16px 14px !important; }
-  .dashboard-home-hero__soul-line {
-    font-size: clamp(16px, 5.5vw, 19px) !important;
-    line-height: 1.22 !important;
-  }
-  .dashboard-home-hero__phase-focus-line { font-size: 12px !important; }
-  .dashboard-home-hero__micro { display: none !important; }
-}
-
-/* ── P4. HERO CARD: DESKTOP POLISH ──────────────────────── */
-@media (min-width: 900px) {
-  .dashboard-home-hero {
-    padding: clamp(28px, 3.5vw, 40px) clamp(28px, 3.5vw, 44px) !important;
-  }
-  .dashboard-home-hero__grid { gap: clamp(28px, 4vw, 48px) !important; }
-  .hero-ring-col { width: min(220px, 22vw) !important; }
-}
-
-/* ── P5. HEADER: TIGHTER MOBILE ─────────────────────────── */
-@media (max-width: 767px) {
-  .app-header {
-    padding: 10px var(--sp-4) !important;
-    border-radius: var(--r-md) !important;
-  }
-  .brand h1 {
-    font-size: clamp(22px, 6vw, 27px) !important;
-  }
-}
-/* Accent line under header: slimmer */
-.app-header::after {
-  height:  1.5px !important;
-  opacity: 0.40 !important;
-  margin:  8px -16px -10px !important;
-}
-
-/* ── P6. CARD SYSTEM REFINEMENTS ────────────────────────── */
-/* Slightly rounder on mobile for premium feel */
-@media (max-width: 479px) {
-  .card { border-radius: 20px !important; }
-  .dashboard-home-hero { border-radius: 24px !important; }
-  .dashboard-card--featured.todays-focus-premium {
-    border-radius: 22px !important;
-    padding: 22px 20px !important;
-  }
-  .todays-focus-premium .dashboard-card__headline {
-    font-size: clamp(24px, 7.5vw, 32px) !important;
-    letter-spacing: -0.04em !important;
-  }
-  .focus-illustration {
-    width: 60px !important; height: 60px !important;
-    font-size: 28px !important;
-  }
-  .focus-tags { margin: 12px 0 14px !important; }
-}
-
-/* ── P7. BOTTOM NAVIGATION: PRECISION ───────────────────── */
-/* Nav button: cleaner hit target */
-.mob-nav-btn {
-  padding:     6px 4px 5px !important;
-  min-height:  52px !important;
-  border-radius: 14px !important;
-  position:    relative !important;
-}
-/* Active: phase-tinted pill with subtle dot */
-.mob-nav-btn.active {
-  background: color-mix(in srgb, var(--phase-primary) 11%, transparent) !important;
-}
-/* Active top dot indicator */
-.mob-nav-btn.active::before {
-  content: "";
-  position: absolute;
-  top:      4px;
-  left:     50%;
-  transform: translateX(-50%);
-  width:    4px; height: 4px;
-  border-radius: 50%;
-  background: var(--phase-primary);
-}
-body.theme-dark .mob-nav-btn.active::before { background: var(--phase-text-accent); }
-/* Nav font: slightly bolder */
-.mob-nav-btn {
-  font-size:   10px !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.025em !important;
-}
-
-/* ── P8. STAT CHIPS: TIGHTER, PREMIUM ───────────────────── */
-.stat-chip {
-  padding:       var(--sp-3) var(--sp-2) !important;
-  border-radius: var(--r-base) !important;
-}
-.stat-value {
-  font-size: clamp(18px, 4.5vw, 24px) !important;
-}
-.stat-label {
-  font-size:      10px !important;
-  letter-spacing: 0.03em !important;
-}
-
-/* ── P9. SECTION LABELS + KICKERS ───────────────────────── */
-.kicker,
-.dashboard-card__eyebrow {
-  font-size:      10px !important;
-  letter-spacing: 0.1em !important;
-  font-weight:    800 !important;
-}
-
-/* ── P10. DROPDOWN SELECTS: PREMIUM STYLING ─────────────── */
-.field select,
-#screen-daily-workout select {
-  appearance:          none !important;
-  -webkit-appearance:  none !important;
-  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
-  background-repeat:   no-repeat !important;
-  background-position: right 14px center !important;
-  background-size:     9px 5px !important;
-  padding-right:       38px !important;
-  border-radius:       var(--r-base) !important;
-  border:              1px solid rgba(200,195,220,.65) !important;
-  font-size:           var(--fs-md) !important;
-  font-weight:         500 !important;
-  line-height:         1.45 !important;
-  min-height:          44px !important;
-  transition:          border-color .14s ease, box-shadow .14s ease !important;
-  cursor:              pointer !important;
-}
-.field select:focus,
-#screen-daily-workout select:focus {
-  border-color: var(--phase-primary) !important;
-  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
-  outline:      none !important;
-}
-body.theme-dark .field select,
-body.theme-dark #screen-daily-workout select {
-  background-color:  rgba(24,20,34,.85) !important;
-  background-image:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
-  border-color:      rgba(255,255,255,.12) !important;
-  color:             var(--text) !important;
-}
-
-/* ── P11. BODY CHECK-IN: PREMIUM CHIPS ──────────────────── */
-.body-checkin {
-  border-radius: var(--r-xl) !important;
-}
-.body-tone-chip {
-  border-radius:  var(--r-full) !important;
-  font-size:      12px !important;
-  font-weight:    600 !important;
-  padding:        6px 14px !important;
-  transition:     background .12s ease, border-color .12s ease, transform .1s ease,
-                  box-shadow .12s ease !important;
-}
-.body-tone-chip.selected,
-.body-tone-chip[aria-pressed="true"] {
-  background:    color-mix(in srgb, var(--phase-primary) 12%, white) !important;
-  border-color:  var(--phase-primary) !important;
-  color:         var(--phase-text-accent) !important;
-  transform:     scale(1.04) !important;
-  box-shadow:    0 0 0 2.5px color-mix(in srgb, var(--phase-primary) 16%, transparent) !important;
-}
-body.theme-dark .body-tone-chip.selected,
-body.theme-dark .body-tone-chip[aria-pressed="true"] {
-  background:   color-mix(in srgb, var(--phase-primary) 18%, var(--card)) !important;
-  border-color: var(--phase-primary) !important;
-  color:        var(--phase-text-accent) !important;
-}
-
-/* ── P12. PROGRESS SCREEN: HEATMAP ──────────────────────── */
-/* Slightly larger cells for better touch + visual weight */
-.heatmap-wrap { --hm-cell: 15px !important; --hm-gap: 3px !important; }
-.heatmap-cell {
-  border-radius: 4px !important;
-}
-.heatmap-cell.heatmap-unlogged {
-  background: color-mix(in srgb, var(--phase-card-accent) 20%,
-    rgba(200,195,220,.22)) !important;
-  border-color: rgba(200,195,215,.25) !important;
-}
-body.theme-dark .heatmap-cell.heatmap-unlogged {
-  background: rgba(255,255,255,.05) !important;
-  border-color: rgba(255,255,255,.07) !important;
-}
-
-/* ── P13. ONBOARDING: RICHER ATMOSPHERE ─────────────────── */
-.onboarding-overlay {
-  background:
-    radial-gradient(ellipse 92% 58% at 50% 0%,
-      color-mix(in srgb, var(--phase-card-accent) 56%, transparent) 0%, transparent 62%),
-    radial-gradient(ellipse 55% 42% at 14% 96%,
-      color-mix(in srgb, var(--phase-secondary) 18%, transparent) 0%, transparent 52%),
-    linear-gradient(176deg, #f7f5fc 0%, #f2eff9 100%) !important;
-}
-body.theme-dark .onboarding-overlay {
-  background:
-    radial-gradient(ellipse 92% 58% at 50% 0%,
-      color-mix(in srgb, var(--phase-primary) 14%, transparent) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 12% 96%,
-      color-mix(in srgb, var(--phase-primary) 7%, transparent) 0%, transparent 55%),
-    linear-gradient(176deg, #0d0b14 0%, #110e1c 100%) !important;
-}
-
-/* Onboarding card: elevated shadow */
-.onboarding-card {
-  box-shadow: 0 24px 72px rgba(17,16,22,.14), 0 6px 20px rgba(17,16,22,.08),
-              inset 0 1px 0 rgba(255,255,255,.9) !important;
-  border: 1px solid rgba(215,210,238,.6) !important;
-}
-body.theme-dark .onboarding-card {
-  box-shadow: 0 24px 72px rgba(0,0,0,.5), 0 6px 20px rgba(0,0,0,.28),
-              inset 0 1px 0 rgba(255,255,255,.05) !important;
-  border-color: rgba(255,255,255,.08) !important;
-}
-
-/* Progress dots: slightly larger, pill more pronounced */
-.ob-dot {
-  width: 9px !important; height: 9px !important;
-  flex-shrink: 0 !important;
-}
-.ob-dot--active {
-  width: 26px !important; height: 9px !important;
-}
-.ob-dot--done {
-  width: 9px !important; height: 9px !important;
-}
-
-/* Desktop: constrain card width */
-@media (min-width: 600px) {
-  .onboarding-card {
-    max-width: 456px !important;
-    margin: 0 auto !important;
-  }
-}
-
-/* Phase card selected: stronger ring */
-.ob-phase-card--selected {
-  border: 2px solid var(--phase-primary) !important;
-  background: color-mix(in srgb, var(--phase-card-accent) 70%, white) !important;
-  box-shadow: 0 0 0 3px color-mix(in srgb, var(--phase-primary) 14%, transparent) !important;
-}
-body.theme-dark .ob-phase-card--selected {
-  background: color-mix(in srgb, var(--phase-card-accent) 38%, var(--card)) !important;
-}
-
-/* ── P14. DARK MODE: SURFACE PRECISION ──────────────────── */
-body.theme-dark .stat-chip {
-  background:   rgba(255,255,255,.04) !important;
-  border-color: rgba(255,255,255,.07) !important;
-}
-body.theme-dark .body-checkin {
-  background: linear-gradient(140deg,
-    color-mix(in srgb, var(--phase-card-accent) 16%, #1e1b2a),
-    #1a1724) !important;
-  border-color: color-mix(in srgb, var(--phase-border-accent) 36%,
-    rgba(255,255,255,.06)) !important;
-}
-body.theme-dark .focus-illustration {
-  background: linear-gradient(145deg,
-    color-mix(in srgb, var(--phase-secondary) 28%, #2a2240),
-    color-mix(in srgb, var(--phase-primary) 18%, #201d2c)) !important;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06),
-    0 14px 32px color-mix(in srgb, var(--phase-primary) 18%, transparent) !important;
-}
-
-/* ── P15. RHYTHM TOOLS ACCORDION LABEL ──────────────────── */
-details.bloom-more-rhythm-tools > summary.bloom-more-rhythm-summary {
-  font-size:      12px !important;
-  letter-spacing: 0.02em !important;
-  opacity:        0.68 !important;
-  padding:        10px 0 !important;
-}
-
-/* ── P16. DASHBOARD SECTION RHYTHM ──────────────────────── */
-#screen-dashboard.active {
-  gap: var(--sp-4) !important;
-}
-@media (min-width: 768px) {
-  #screen-dashboard.active { gap: var(--sp-5) !important; }
-}
-@media (min-width: 1100px) {
-  #screen-dashboard.active { gap: var(--sp-6) !important; }
-  .app-shell { padding-top: var(--sp-6) !important; }
-}
-
-/* ── P17. DESKTOP: 2-COLUMN SUPPORTING CARDS ────────────── */
-@media (min-width: 860px) {
-  #screen-dashboard.active {
-    display:               grid !important;
-    grid-template-columns: 1fr 1fr !important;
-    align-items:           start !important;
-    max-width:             1080px !important;
-  }
-  /* Hero: full width */
-  #screen-dashboard.active > #today-hero,
-  #screen-dashboard.active > .dashboard-home-hero {
-    grid-column: 1 / -1 !important;
-  }
-  /* Today's focus: full width */
-  #screen-dashboard.active > .todays-focus-premium {
-    grid-column: 1 / -1 !important;
-  }
-  /* Accordions and banners: full width */
-  #screen-dashboard.active > details,
-  #screen-dashboard.active > .quick-start-banner,
-  #screen-dashboard.active > [class*="phase-ahead"],
-  #screen-dashboard.active > [class*="phase-prep"] {
-    grid-column: 1 / -1 !important;
-  }
-}
-
-/* ── P18. INPUT FIELDS: PRECISE STYLING ─────────────────── */
-.field label {
-  font-size:      12px !important;
-  font-weight:    600 !important;
-  letter-spacing: 0.02em !important;
-  color:          var(--muted) !important;
-  margin-bottom:  var(--sp-1) !important;
-}
-input[type="text"],
-input[type="number"],
-textarea {
-  border-radius: var(--r-base) !important;
-  border:        1px solid rgba(200,195,220,.6) !important;
-  padding:       10px 14px !important;
-  font-size:     var(--fs-md) !important;
-  transition:    border-color .14s ease, box-shadow .14s ease !important;
-  min-height:    44px !important;
-}
-input[type="text"]:focus,
-input[type="number"]:focus,
-textarea:focus {
-  border-color: var(--phase-primary) !important;
-  box-shadow:   0 0 0 3px color-mix(in srgb, var(--phase-primary) 12%, transparent) !important;
-  outline:      none !important;
-}
-
-/* ── P19. TODAY'S FOCUS CARD: DARK MODE ─────────────────── */
-body.theme-dark .dashboard-card--featured.todays-focus-premium {
-  background:
-    radial-gradient(circle at 84% 14%,
-      color-mix(in srgb, var(--phase-secondary) 18%, transparent), transparent 36%),
-    linear-gradient(138deg,
-      color-mix(in srgb, var(--phase-card-accent) 28%, #1e1b2a),
-      #18161f) !important;
-  border-color: color-mix(in srgb, var(--phase-border-accent) 35%,
-    rgba(255,255,255,.06)) !important;
-}
-
-/* ── P20. TABLET: LEFT DOCK SIZING ──────────────────────── */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .left-dock {
-    width: 60px !important;
-  }
-}
-
-/* ── P21. MOTION: SUBTLE ENTRANCE ────────────────────────── */
-@keyframes bloom-rise {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
-#screen-dashboard.active > * {
-  animation: bloom-rise 340ms cubic-bezier(0.22,1,0.36,1) both;
-}
-#screen-dashboard.active > *:nth-child(1) { animation-delay: 0ms; }
-#screen-dashboard.active > *:nth-child(2) { animation-delay: 60ms; }
-#screen-dashboard.active > *:nth-child(3) { animation-delay: 110ms; }
-#screen-dashboard.active > *:nth-child(4) { animation-delay: 155ms; }
-#screen-dashboard.active > *:nth-child(5) { animation-delay: 195ms; }
-#screen-dashboard.active > *:nth-child(6) { animation-delay: 230ms; }
-#screen-dashboard.active > *:nth-child(n+7) { animation-delay: 260ms; }
-@media (prefers-reduced-motion: reduce) {
-  #screen-dashboard.active > * { animation: none !important; }
-}
-
-/* ── P22. FOCUS VISIBLE ──────────────────────────────────── */
-:focus-visible {
-  outline:        2px solid var(--phase-primary) !important;
-  outline-offset: 3px !important;
-}
-
-/* ── P23. PHASE STRIP BUTTONS (switcher in text col) ─────── */
-.phase-strip-btn {
-  font-size:     11px !important;
-  padding:       5px 11px !important;
-  border-radius: var(--r-full) !important;
-  font-weight:   600 !important;
-  letter-spacing: 0.01em !important;
-}
-
-/* ── P24. CARD INNER PADDING NORMALISATION ───────────────── */
-@media (max-width: 479px) {
-  .card { padding: 16px !important; }
-  .dashboard-home-hero { padding: 22px 18px 20px !important; }
-  .dashboard-card--featured.todays-focus-premium { padding: 22px 20px !important; }
-}
-@media (min-width: 480px) {
-  .card { padding: 20px !important; }
-}
-@media (min-width: 768px) {
-  .card { padding: 24px !important; }
-}
-
-/* ── P25. READINESS METER CARD ───────────────────────────── */
-.bloom-readiness-meter {
-  border-radius: var(--r-xl) !important;
-}
-input[type="range"] {
-  accent-color: var(--phase-primary) !important;
-  height:       4px !important;
-  cursor:       pointer !important;
-}
-
-/* ── P26. ONBOARDING DARK MODE: PRIVACY CHIP ────────────── */
-body.theme-dark .ob-privacy-note {
-  background:   color-mix(in srgb, var(--phase-card-accent) 20%, rgba(40,36,52,.9)) !important;
-  border-color: color-mix(in srgb, var(--phase-border-accent) 28%, rgba(255,255,255,.08)) !important;
-  color:        var(--muted) !important;
-}
-body.theme-dark .ob-privacy-note span {
-  color: var(--muted) !important;
-}
-/* Dark onboarding headings: warm pink accent */
-body.theme-dark .ob-step-content h2,
-body.theme-dark .ob-step-content .onboarding-heading {
-  color: #fecdd3 !important;
-}
-
-/* ── P27. PHASE STRIP BAR: DARK MODE ────────────────────── */
-body.theme-dark .hero-phase-strip__dot {
-  border-color: rgba(18,15,26,.9) !important;
-}
-
-/* ── P28. SETTINGS SCREEN SELECTS ───────────────────────── */
-#screen-settings select,
-#screen-profile select {
-  appearance:          none !important;
-  -webkit-appearance:  none !important;
-  background-image:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
-  background-repeat:   no-repeat !important;
-  background-position: right 14px center !important;
-  background-size:     9px 5px !important;
-  padding-right:       38px !important;
-  border-radius:       var(--r-base) !important;
-  border:              1px solid rgba(200,195,220,.65) !important;
-  font-size:           var(--fs-md) !important;
-  font-weight:         500 !important;
-  min-height:          44px !important;
-  cursor:              pointer !important;
-}
-body.theme-dark #screen-settings select,
-body.theme-dark #screen-profile select {
-  background-color:  rgba(24,20,34,.85) !important;
-  background-image:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238a8298'/%3E%3C/svg%3E") !important;
-  border-color:      rgba(255,255,255,.12) !important;
-  color:             var(--text) !important;
-}
-
-/* ── P29. HERO DATE SLOT: PRECISE TYPOGRAPHY ────────────── */
-.hero-date-slot {
-  font-size:      10px !important;
-  font-weight:    800 !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
-  color:          var(--phase-text-accent) !important;
-  margin-bottom:  var(--sp-2) !important;
-  opacity:        0.85 !important;
-}
-
-/* ── P30. SNAPSHOT STRIP: 3-COL EVEN ────────────────────── */
-.snapshot-strip {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap:                   var(--sp-3) !important;
-}
-@media (max-width: 359px) {
-  .snapshot-strip { gap: var(--sp-2) !important; }
-  .stat-chip { padding: 10px 8px !important; }
-}
-
-/* ── P31. PROGRESS SCREEN CARD HEADER ───────────────────── */
-.progress-card > h2,
-.progress-card > .section-title {
-  font-family:    var(--font-serif) !important;
-  font-style:     italic !important;
-  font-size:      clamp(18px, 4vw, 24px) !important;
-  letter-spacing: -0.02em !important;
-}
-
-</style>
+<!-- bloom-polish-v1 moved to <head> for correct CSS cascade -->
 
 <!-- ═══════════════════════════════════════════════════════════
      BLOOM — CRITICAL CSS FIX
@@ -11067,12 +12225,7 @@ body.theme-dark #screen-profile select {
      Fix: Mirror inline-style changes onto a CSS class with
           higher specificity (two classes beats one class).
      ═══════════════════════════════════════════════════════════ -->
-<style id="bloom-hidden-fix">
-/* Two-class selector (0,2,0) beats .onboarding-overlay (0,1,0) at same !important level */
-.onboarding-overlay.bloom-onb-closed { display: none !important; }
-/* Also hide the onboarding-open overflow lock when closed */
-html.bloom-onb-closed-html, body.bloom-onb-closed-body { overflow: auto !important; }
-</style>
+<!-- bloom-hidden-fix moved to <head> for correct CSS cascade -->
 
 <!-- ═══════════════════════════════════════════════════════════
      BLOOM — ACCESS BLOCKER RESCUE v1
@@ -11202,6 +12355,46 @@ html.bloom-onb-closed-html, body.bloom-onb-closed-body { overflow: auto !importa
   } else {
     init();
   }
+})();
+</script>
+
+<!-- bloom-os-premium-v1 moved to <head> for correct CSS cascade -->
+
+<!-- ═══════════════════════════════════════════════════════
+     BLOOM QA FIXES — 2026-05-28
+     Addresses all issues from the premium UX/UI audit:
+     C1  iOS input zoom (16px on mobile)
+     C2  body::before grid texture leaks into dark mode
+     H1  snapshot-strip overflow at 320px
+     H2  quick-log-bar max-width on narrow phones
+     H3  Reduce backdrop-filter on mobile (scroll jank)
+     H4  Dashboard hero min-height guard at narrow phones
+     M1  h2 section-title override narrowed to actual sections
+     M2  App-shell padding-bottom consolidated on mobile
+     M3  date/tel/search inputs also get 16px on mobile
+     M4  chip-row: allow wrapping at ≤380px instead of h-scroll
+     P3  apple-mobile-web-app-status-bar dark mode fix (JS)
+     P4  install-hint cleared above quick-log bar on mobile
+══════════════════════════════════════════════════════════ -->
+<!-- bloom-qa-fixes-2026 moved to <head> for correct CSS cascade -->
+
+<script>
+/* P3 — Sync status bar style with dark/light mode for PWA */
+(function() {
+  function syncStatusBar() {
+    var isDark = document.body.classList.contains('theme-dark') ||
+                 document.body.classList.contains('dark') ||
+                 document.documentElement.classList.contains('dark');
+    var meta = document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]');
+    if (meta) meta.setAttribute('content', isDark ? 'black-translucent' : 'default');
+    var theme = document.querySelector('meta[name="theme-color"]');
+    if (theme) theme.setAttribute('content', isDark ? '#110d12' : '#a78bfa');
+  }
+  // Run on load and whenever theme class changes
+  syncStatusBar();
+  var observer = new MutationObserver(syncStatusBar);
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 })();
 </script>
 
